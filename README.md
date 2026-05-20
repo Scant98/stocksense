@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StockSense
 
-## Getting Started
+StockSense is a Next.js + Electron inventory application backed by a local SQLite database.
 
-First, run the development server:
+## Local Setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Bootstrap the app:
+
+```bash
+npm run setup
+```
+
+3. Start development:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The setup script copies `.env.example` to `.env.local` when needed, generates the Prisma client, applies migrations, and seeds the database.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Desktop App
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Build an installer with:
 
-## Learn More
+```bash
+npm run electron:build
+```
 
-To learn more about Next.js, take a look at the following resources:
+The generated installer is written to `dist-electron/`. On first launch, the packaged app copies the bundled seed database into the current user's application data directory and runs against that writable copy, so it can be installed on another computer without manual database setup.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Environment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Use `.env.local` for local development:
 
-## Deploy on Vercel
+```env
+LIBSQL_EMBEDDED_URL="file:prisma/dev.db"
+SESSION_SECRET="replace-this-with-a-long-random-secret"
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Useful Commands
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run setup` initializes a fresh machine.
+- `npm run db:seed` reseeds the database.
+- `npm run backup` exports the current database to `backups/`.
+- `npm run restore -- backups/<file>.json` restores a backup.
+- `npm run electron:build` creates an installer.

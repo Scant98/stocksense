@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  color     String    @default("#6366F1")
+  icon      String    @default("Package")
+  products  Product[]
+  createdAt DateTime  @default(now())
+}
+
+model Supplier {
+  id          String    @id @default(cuid())
+  name        String
+  email       String    @unique
+  phone       String    @default("")
+  address     String    @default("")
+  country     String    @default("Tanzania")
+  rating      Float     @default(0)
+  totalOrders Int       @default(0)
+  status      String    @default("active")
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id            String        @id @default(cuid())
+  name          String
+  sku           String?
+  categoryId    String
+  category      Category      @relation(fields: [categoryId], references: [id])
+  supplierId    String?
+  supplier      Supplier?     @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  quantity      Int           @default(0)
+  reorderPoint  Int           @default(10)
+  unitPrice     Float
+  sellingPrice  Float
+  description   String        @default("")
+  status        String        @default("in_stock")
+  location      String        @default("")
+  lastRestocked DateTime      @default(now())
+  transactions  Transaction[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  type        String
+  quantity    Int
+  unitPrice   Float
+  totalAmount Float
+  reference   String   @unique
+  notes       String   @default("")
+  createdAt   DateTime @default(now())
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  invoiceNumber String        @unique
+  clientName    String
+  clientEmail   String        @default("")
+  clientPhone   String        @default("")
+  clientAddress String        @default("")
+  status        String        @default("draft")
+  notes         String        @default("")
+  items         InvoiceItem[]
+  subtotal      Float
+  tax           Float         @default(0)
+  total         Float
+  dueDate       DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model InvoiceSequence {
+  key       String   @id
+  value     Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model InvoiceItem {
+  id          String  @id @default(cuid())
+  invoiceId   String
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Int
+  unitPrice   Float
+  total       Float
+}
