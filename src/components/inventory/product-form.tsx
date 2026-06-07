@@ -15,20 +15,17 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useAddCategory } from "@/hooks/use-api";
-import type { Product, Category, Supplier } from "@/lib/types";
+import type { Product, Category } from "@/lib/types";
 import { getStockStatus } from "@/lib/utils";
 import { toast } from "sonner";
 
 const schema = z.object({
   name: z.string().min(2, "Name is required"),
-  sku: z.string().optional(),
   categoryId: z.string().min(1, "Category is required"),
-  supplierId: z.string().optional(),
   quantity: z.number().min(0, "Quantity must be 0 or more"),
   reorderPoint: z.number().min(1, "Reorder point required"),
   unitPrice: z.number().min(1, "Unit price required"),
   sellingPrice: z.number().min(1, "Selling price required"),
-  location: z.string().optional(),
   description: z.string().optional(),
 });
 
@@ -42,7 +39,6 @@ const CATEGORY_COLORS = [
 interface ProductFormProps {
   product?: Product;
   categories: Category[];
-  suppliers: Supplier[];
   onSubmit: (data: Partial<Product>) => void;
   onCancel: () => void;
 }
@@ -50,7 +46,6 @@ interface ProductFormProps {
 export function ProductForm({
   product,
   categories = [],
-  suppliers = [],
   onSubmit,
   onCancel,
 }: ProductFormProps) {
@@ -66,17 +61,14 @@ export function ProductForm({
     defaultValues: product
       ? {
           name: product.name,
-          sku: product.sku,
           categoryId: product.categoryId,
-          supplierId: product.supplierId,
           quantity: product.quantity,
           reorderPoint: product.reorderPoint,
           unitPrice: product.unitPrice,
           sellingPrice: product.sellingPrice,
-          location: product.location,
           description: product.description,
         }
-      : { quantity: 0, reorderPoint: 10, sku: "", location: "", supplierId: "" },
+      : { quantity: 0, reorderPoint: 10 },
   });
 
   const selectableCategories = useMemo(() => {
@@ -95,9 +87,6 @@ export function ProductForm({
       unitPrice: data.unitPrice,
       sellingPrice: data.sellingPrice,
       categoryId: data.categoryId,
-      supplierId: data.supplierId || undefined,
-      sku: data.sku || undefined,
-      location: data.location || undefined,
       description: data.description || "",
       status: getStockStatus(data.quantity, data.reorderPoint),
       lastRestocked: new Date().toISOString(),
@@ -139,16 +128,6 @@ export function ProductForm({
           {errors.name && <p className="mt-1 text-xs text-[#F43F5E]">{errors.name.message}</p>}
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">SKU</label>
-          <Input {...register("sku")} placeholder="ELEC-SAM-001" />
-          {errors.sku && <p className="mt-1 text-xs text-[#F43F5E]">{errors.sku.message}</p>}
-        </div>
-        <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Location</label>
-          <Input {...register("location")} placeholder="Shelf A-12" />
-          {errors.location && <p className="mt-1 text-xs text-[#F43F5E]">{errors.location.message}</p>}
-        </div>
-        <div>
           <div className="mb-1.5 flex items-center justify-between gap-2">
             <label className="block text-xs font-medium text-[#9CA3AF]">Category</label>
             <button
@@ -160,42 +139,23 @@ export function ProductForm({
               New
             </button>
           </div>
-          <div className="flex gap-2">
-            <Select
-              value={selectedCategoryId}
-              onValueChange={(v) => {
-                setSelectedCategoryId(v);
-                setValue("categoryId", v, { shouldValidate: true });
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {selectableCategories.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          {errors.categoryId && <p className="mt-1 text-xs text-[#F43F5E]">{errors.categoryId.message}</p>}
-        </div>
-        <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Supplier</label>
           <Select
-            defaultValue={product?.supplierId}
-            onValueChange={(v) => setValue("supplierId", v)}
+            value={selectedCategoryId}
+            onValueChange={(v) => {
+              setSelectedCategoryId(v);
+              setValue("categoryId", v, { shouldValidate: true });
+            }}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select supplier" />
+              <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
-              {suppliers.map((s) => (
-                <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+              {selectableCategories.map((c) => (
+                <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
-          {errors.supplierId && <p className="mt-1 text-xs text-[#F43F5E]">{errors.supplierId.message}</p>}
+          {errors.categoryId && <p className="mt-1 text-xs text-[#F43F5E]">{errors.categoryId.message}</p>}
         </div>
         <div>
           <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Quantity</label>
@@ -208,7 +168,7 @@ export function ProductForm({
           {errors.reorderPoint && <p className="mt-1 text-xs text-[#F43F5E]">{errors.reorderPoint.message}</p>}
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Unit Price (TZS)</label>
+          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Cost Price (TZS)</label>
           <Input type="number" {...register("unitPrice", { valueAsNumber: true })} placeholder="50000" />
           {errors.unitPrice && <p className="mt-1 text-xs text-[#F43F5E]">{errors.unitPrice.message}</p>}
         </div>
@@ -218,7 +178,7 @@ export function ProductForm({
           {errors.sellingPrice && <p className="mt-1 text-xs text-[#F43F5E]">{errors.sellingPrice.message}</p>}
         </div>
         <div className="col-span-2">
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Description</label>
+          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Description (optional)</label>
           <Input {...register("description")} placeholder="Product description..." />
         </div>
       </div>
@@ -240,7 +200,7 @@ export function ProductForm({
             <Input
               value={categoryName}
               onChange={(event) => setCategoryName(event.target.value)}
-              placeholder="e.g. Electrical Components"
+              placeholder="e.g. Electronics"
             />
           </div>
           <div>

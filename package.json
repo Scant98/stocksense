@@ -1,6 +1,6 @@
 {
   "name": "stocksense",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Desktop inventory, supplier, invoice, and stock management for small businesses.",
   "author": "StockSense",
@@ -17,18 +17,20 @@
     "backup": "tsx scripts/backup.ts",
     "restore": "tsx scripts/restore.ts",
     "assets:icons": "node scripts/generate-icons.mjs",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate && electron-builder install-app-deps",
     "electron": "electron .",
     "electron:dev": "concurrently -k -n NEXT,ELECTRON -c blue,magenta \"next dev\" \"wait-on http://localhost:3000 && electron .\"",
     "electron:clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true});require('fs').rmSync('dist-electron',{recursive:true,force:true})\"",
-    "electron:build": "npm run electron:clean && npm run build:webpack && electron-builder",
-    "electron:pack": "npm run electron:clean && npm run build:webpack && electron-builder --dir"
+    "electron:rebuild": "electron-rebuild -f -w better-sqlite3",
+    "electron:build": "npm run electron:clean && npm run build:webpack && npm run electron:rebuild && electron-builder",
+    "electron:pack": "npm run electron:clean && npm run build:webpack && npm run electron:rebuild && electron-builder --dir"
   },
   "build": {
     "appId": "co.tz.stocksense.app",
     "productName": "StockSense",
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "asar": true,
+    "npmRebuild": true,
     "directories": {
       "output": "dist-electron"
     },
@@ -83,7 +85,12 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false,
+      "installerLanguages": [
+        "en_US"
+      ],
+      "shortcutName": "StockSense"
     }
   },
   "prisma": {
@@ -132,6 +139,8 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@electron/fuses": "^2.1.1",
+    "@electron/rebuild": "^4.0.4",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/better-sqlite3": "^7.6.13",

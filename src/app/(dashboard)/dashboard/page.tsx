@@ -6,7 +6,6 @@ import {
   AlertTriangle,
   TrendingUp,
   ShoppingCart,
-  Users,
 } from "lucide-react";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { SalesChart } from "@/components/dashboard/sales-chart";
@@ -117,25 +116,25 @@ export default function DashboardPage() {
         {/* Secondary Stats */}
         <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
           <StatCard
-            title="Active Suppliers"
-            value={data.activeSuppliers}
-            icon={Users}
+            title="Today's Revenue"
+            value={data.todaySalesAmount}
+            formatter={formatCurrency}
+            icon={TrendingUp}
             accent="success"
             delay={0.35}
+          />
+          <StatCard
+            title="Today's Sales"
+            value={data.todaySalesCount}
+            icon={ShoppingCart}
+            accent="primary"
+            delay={0.38}
           />
           <StatCard
             title="Out of Stock"
             value={data.outOfStockCount}
             icon={Package}
             accent="danger"
-            delay={0.38}
-          />
-          <StatCard
-            title="Total Orders"
-            value={data.totalOrders}
-            icon={ShoppingCart}
-            change={5}
-            accent="primary"
             delay={0.41}
           />
           <StatCard

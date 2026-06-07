@@ -1,9 +1,9 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Edit2, Trash2, Eye, TrendingDown, TrendingUp, Minus } from "lucide-react";
+import { Edit2, Trash2, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import type { Product } from "@/lib/types";
 
 const statusConfig = {
@@ -30,10 +30,9 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Product</th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Category</th>
               <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Stock</th>
-              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Unit Price</th>
+              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Selling Price</th>
               <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Value</th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Location</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -52,10 +51,7 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                     className={`border-b border-white/5 hover:bg-white/3 transition-colors ${isLow ? "bg-[rgba(244,63,94,0.02)]" : ""}`}
                   >
                     <td className="px-4 py-3">
-                      <div>
-                        <p className="font-medium text-white">{product.name}</p>
-                        <p className="text-xs text-[#9CA3AF]">{product.sku}</p>
-                      </div>
+                      <p className="font-medium text-white">{product.name}</p>
                     </td>
                     <td className="px-4 py-3">
                       <span
@@ -93,7 +89,6 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                     <td className="px-4 py-3">
                       <Badge variant={status.variant}>{status.label}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-[#9CA3AF] text-xs">{product.location}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1 justify-end">
                         <Button variant="ghost" size="icon" onClick={() => onView(product)}>

@@ -29,6 +29,14 @@ export async function GET() {
   const activeSuppliers = suppliers.filter((s) => s.status === "active").length;
   const totalOrders = transactions.filter((t) => t.type === "purchase").length;
 
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const todaySales = transactions.filter(
+    (t) => t.type === "sale" && new Date(t.createdAt) >= todayStart
+  );
+  const todaySalesAmount = todaySales.reduce((s, t) => s + t.totalAmount, 0);
+  const todaySalesCount = todaySales.length;
+
   const now = new Date();
   const months = Array.from({ length: 6 }, (_, i) => {
     const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
@@ -80,6 +88,8 @@ export async function GET() {
     totalSales,
     activeSuppliers,
     totalOrders,
+    todaySalesAmount,
+    todaySalesCount,
     categoriesCount: categories.length,
     salesChartData,
     categoryStockData,

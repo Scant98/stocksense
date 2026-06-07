@@ -26,7 +26,6 @@ import {
   useCategories,
   useDeleteProduct,
   useProducts,
-  useSuppliers,
   useUpdateProduct,
 } from "@/hooks/use-api";
 import type { Product } from "@/lib/types";
@@ -39,7 +38,6 @@ export default function InventoryPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const { data: products = [], isLoading } = useProducts();
   const { data: categories = [] } = useCategories();
-  const { data: suppliers = [] } = useSuppliers();
   const addProduct = useAddProduct();
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
@@ -53,8 +51,7 @@ export default function InventoryPage() {
     return products.filter((p) => {
       const matchSearch =
         !searchQuery ||
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (p.sku && p.sku.toLowerCase().includes(searchQuery.toLowerCase()));
+        p.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchCategory = categoryFilter === "all" || p.categoryId === categoryFilter;
       const matchStatus = statusFilter === "all" || p.status === statusFilter;
       return matchSearch && matchCategory && matchStatus;
@@ -126,7 +123,7 @@ export default function InventoryPage() {
           <div className="relative flex-1 min-w-60">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9CA3AF]" />
             <Input
-              placeholder="Search products or SKU..."
+              placeholder="Search products..."
               className="pl-9"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -209,7 +206,6 @@ export default function InventoryPage() {
           </DialogHeader>
           <ProductForm
             categories={categories}
-            suppliers={suppliers}
             onSubmit={handleAdd}
             onCancel={() => setAddOpen(false)}
           />
@@ -227,7 +223,6 @@ export default function InventoryPage() {
             <ProductForm
               product={editProduct}
               categories={categories}
-              suppliers={suppliers}
               onSubmit={handleEdit}
               onCancel={() => setEditProduct(null)}
             />
@@ -246,15 +241,11 @@ export default function InventoryPage() {
               <div className="grid grid-cols-2 gap-3">
                 {[
                   ["Name", viewProduct.name],
-                  ["SKU", viewProduct.sku ?? "—"],
                   ["Category", viewProduct.category.name],
-                  ["Supplier", viewProduct.supplier?.name ?? "—"],
                   ["Quantity", viewProduct.quantity.toString()],
                   ["Reorder Point", viewProduct.reorderPoint.toString()],
-                  ["Unit Price", formatCurrency(viewProduct.unitPrice)],
+                  ["Cost Price", formatCurrency(viewProduct.unitPrice)],
                   ["Selling Price", formatCurrency(viewProduct.sellingPrice)],
-                  ["Location", viewProduct.location ?? "—"],
-                  ["Last Restocked", viewProduct.lastRestocked?.slice(0, 10) ?? "—"],
                 ].map(([label, value]) => (
                   <div key={label} className="rounded-xl bg-white/5 px-3 py-2.5">
                     <p className="text-xs text-[#9CA3AF]">{label}</p>

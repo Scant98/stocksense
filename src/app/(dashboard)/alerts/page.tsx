@@ -49,7 +49,7 @@ export default function AlertsPage() {
                   >
                     <div>
                       <p className="font-medium text-white">{p.name}</p>
-                      <p className="text-xs text-[#9CA3AF]">{p.sku ?? 'No SKU'}{p.supplier ? ` · ${p.supplier.name}` : ''}</p>
+                      <p className="text-xs text-[#9CA3AF]">{p.category.name}</p>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="text-right">
@@ -89,7 +89,7 @@ export default function AlertsPage() {
                   >
                     <div>
                       <p className="font-medium text-white">{p.name}</p>
-                      <p className="text-xs text-[#9CA3AF]">{p.sku ?? 'No SKU'}{p.supplier ? ` · ${p.supplier.name}` : ''}</p>
+                      <p className="text-xs text-[#9CA3AF]">{p.category.name}</p>
                     </div>
                     <div className="flex items-center gap-6">
                       <div className="text-right">

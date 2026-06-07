@@ -43,7 +43,7 @@ export function LowStockAlert({ products = [] }: Props) {
           <div key={p.id} className="flex items-center justify-between rounded-xl bg-white/5 px-3 py-2">
             <div className="min-w-0">
               <p className="truncate text-sm font-medium text-white">{p.name}</p>
-              <p className="text-xs text-[#9CA3AF]">SKU: {p.sku ? p.sku.split("-").slice(-1)[0] : "—"}</p>
+              <p className="text-xs text-[#9CA3AF]">{p.category.name}</p>
             </div>
             <div className="ml-3 shrink-0 text-right">
               <p className={`text-sm font-bold ${p.status === "out_of_stock" ? "text-[#F43F5E]" : "text-[#F59E0B]"}`}>
