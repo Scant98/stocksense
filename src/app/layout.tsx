@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/providers/theme-provider";
 import "./globals.css";
 
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0A0F1E",
+  themeColor: "#0F0F0F",
   width: "device-width",
   initialScale: 1,
 };
@@ -32,14 +33,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const noFlashScript = `
     try {
       var t = localStorage.getItem('stocksense:theme') || 'dark';
-      var a = localStorage.getItem('stocksense:accent') || '#6366F1';
       var resolved = t === 'system'
         ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
         : t;
       var r = document.documentElement;
       r.dataset.theme = resolved;
-      r.style.colorScheme = resolved;
-      r.style.setProperty('--color-primary', a);
+      var accents = {
+        violet: ['#8B5CF6', '#ffffff'],
+        amber: ['#F59E0B', '#231a05'],
+        rose: ['#F43F5E', '#ffffff'],
+        orange: ['#F97316', '#2b1503']
+      };
+      var a = accents[localStorage.getItem('stocksense:accent')];
+      if (a) {
+        ['--primary', '--ring', '--sidebar-primary', '--sidebar-ring'].forEach(function (v) {
+          r.style.setProperty(v, a[0]);
+        });
+        r.style.setProperty('--primary-foreground', a[1]);
+        r.style.setProperty('--sidebar-primary-foreground', a[1]);
+      }
     } catch (e) {}
   `;
   return (
@@ -49,18 +61,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <ThemeProvider>
-          {children}
-          <Toaster
-            position="bottom-right"
-            toastOptions={{
-              style: {
-                background: "rgba(17, 24, 39, 0.95)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: "#F9FAFB",
-                backdropFilter: "blur(20px)",
-              },
-            }}
-          />
+          <TooltipProvider>
+            {children}
+            <Toaster position="bottom-right" />
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

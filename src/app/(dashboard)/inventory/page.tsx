@@ -94,7 +94,7 @@ export default function InventoryPage() {
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#6366F1] border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     );
   }
@@ -121,7 +121,7 @@ export default function InventoryPage() {
           className="flex flex-wrap gap-3"
         >
           <div className="relative flex-1 min-w-60">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9CA3AF]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search products..."
               className="pl-9"
@@ -152,7 +152,7 @@ export default function InventoryPage() {
               <SelectItem value="out_of_stock">Out of Stock</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="md">
+          <Button variant="outline" size="sm">
             <Download className="h-4 w-4" />
             Export
           </Button>
@@ -176,12 +176,12 @@ export default function InventoryPage() {
               onClick={() => setStatusFilter(item.value)}
               className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
                 statusFilter === item.value
-                  ? "border-[#6366F1]/40 bg-[#6366F1]/20 text-[#818CF8]"
-                  : "border-white/10 bg-white/5 text-[#9CA3AF] hover:text-white"
+                  ? "border-primary/40 bg-primary/20 text-primary"
+                  : "border-border bg-muted/40 text-muted-foreground hover:text-foreground"
               }`}
             >
               {item.label}
-              <span className="rounded-full bg-white/10 px-1.5 py-0.5 text-[10px]">
+              <span className="rounded-full bg-muted/60 px-1.5 py-0.5 text-[10px]">
                 {item.count}
               </span>
             </button>
@@ -247,16 +247,16 @@ export default function InventoryPage() {
                   ["Cost Price", formatCurrency(viewProduct.unitPrice)],
                   ["Selling Price", formatCurrency(viewProduct.sellingPrice)],
                 ].map(([label, value]) => (
-                  <div key={label} className="rounded-xl bg-white/5 px-3 py-2.5">
-                    <p className="text-xs text-[#9CA3AF]">{label}</p>
-                    <p className="text-sm font-medium text-white">{value}</p>
+                  <div key={label} className="rounded-xl bg-muted/40 px-3 py-2.5">
+                    <p className="text-xs text-muted-foreground">{label}</p>
+                    <p className="text-sm font-medium text-foreground">{value}</p>
                   </div>
                 ))}
               </div>
               {viewProduct.description && (
-                <div className="rounded-xl bg-white/5 px-3 py-2.5">
-                  <p className="text-xs text-[#9CA3AF]">Description</p>
-                  <p className="text-sm text-white">{viewProduct.description}</p>
+                <div className="rounded-xl bg-muted/40 px-3 py-2.5">
+                  <p className="text-xs text-muted-foreground">Description</p>
+                  <p className="text-sm text-foreground">{viewProduct.description}</p>
                 </div>
               )}
             </div>
@@ -275,7 +275,7 @@ export default function InventoryPage() {
           </DialogHeader>
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="ghost" onClick={() => setDeleteConfirm(null)}>Cancel</Button>
-            <Button variant="danger" onClick={() => deleteConfirm && handleDelete(deleteConfirm)}>
+            <Button variant="destructive" onClick={() => deleteConfirm && handleDelete(deleteConfirm)}>
               Delete
             </Button>
           </div>

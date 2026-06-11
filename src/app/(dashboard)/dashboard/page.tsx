@@ -12,7 +12,6 @@ import { SalesChart } from "@/components/dashboard/sales-chart";
 import { CategoryChart } from "@/components/dashboard/category-chart";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { LowStockAlert } from "@/components/dashboard/low-stock-alert";
-import { Meteors } from "@/components/magic/meteors";
 import { BlurFade } from "@/components/magic/blur-fade";
 import { formatCurrency } from "@/lib/utils";
 import { useDashboard, useUser } from "@/hooks/use-api";
@@ -35,7 +34,7 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#6366F1] border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     );
   }
@@ -47,21 +46,20 @@ export default function DashboardPage() {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: "easeOut" }}>
       {/* Hero Banner */}
-      <div className="relative overflow-hidden border-b border-white/8 bg-gradient-to-br from-[#0A0F1E] via-[#0f1729] to-[#0A0F1E] px-6 py-8">
-        <Meteors number={15} />
+      <div className="relative overflow-hidden border-b bg-gradient-to-br from-primary/10 via-background to-background px-6 py-8">
         <div className="relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <p className="text-xs font-medium uppercase tracking-widest text-[#6366F1]" suppressHydrationWarning>
+            <p className="text-xs font-medium uppercase tracking-widest text-primary" suppressHydrationWarning>
               {dateLabel} · Dar es Salaam
             </p>
-            <h1 className="mt-1 text-2xl font-bold text-white">
+            <h1 className="mt-1 text-2xl font-bold text-foreground">
               Good {greeting}, {firstName} 👋
             </h1>
-            <p className="mt-1 text-sm text-[#9CA3AF]">
+            <p className="mt-1 text-sm text-muted-foreground">
               Here&apos;s what&apos;s happening with your inventory today.
             </p>
           </motion.div>

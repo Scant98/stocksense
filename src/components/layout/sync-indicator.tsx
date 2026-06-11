@@ -83,12 +83,12 @@ export function SyncIndicator() {
   const Icon = !online ? CloudOff : syncing ? RefreshCw : hasError || isDisabled ? Cloud : lastSyncDate ? Check : Cloud;
 
   const tone = !online || hasError
-    ? "border-[#F43F5E]/30 bg-[#F43F5E]/10 text-[#F43F5E]"
+    ? "border-destructive/30 bg-destructive/10 text-destructive"
     : isDisabled
-    ? "border-white/10 bg-white/5 text-[#9CA3AF]"
+    ? "border-border bg-muted/40 text-muted-foreground"
     : syncing
-    ? "border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 text-[var(--color-primary-hover)]"
-    : "border-white/10 bg-white/5 text-[#9CA3AF] hover:text-white hover:border-white/20";
+    ? "border-primary/30 bg-primary/10 text-primary"
+    : "border-border bg-muted/40 text-muted-foreground hover:text-foreground hover:border-border";
 
   return (
     <button
@@ -104,12 +104,12 @@ export function SyncIndicator() {
       <span className="relative flex h-2 w-2">
         <span
           className={`absolute inline-flex h-full w-full rounded-full ${
-            online && !hasError ? "bg-[#10B981]" : "bg-[#F43F5E]"
+            online && !hasError ? "bg-success" : "bg-destructive"
           } ${online && !hasError ? "animate-ping opacity-50" : ""}`}
         />
         <span
           className={`relative inline-flex h-2 w-2 rounded-full ${
-            online && !hasError ? "bg-[#10B981]" : "bg-[#F43F5E]"
+            online && !hasError ? "bg-success" : "bg-destructive"
           }`}
         />
       </span>

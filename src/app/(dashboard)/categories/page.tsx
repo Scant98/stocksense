@@ -16,8 +16,8 @@ import { useCategories, useAddCategory, useUpdateCategory, useDeleteCategory } f
 import { toast } from "sonner";
 
 const COLORS = [
-  "#6366F1", "#10B981", "#F59E0B", "#F43F5E", "#3B82F6", "#8B5CF6",
-  "#EC4899", "#14B8A6", "#F97316", "#06B6D4", "#84CC16", "#EAB308",
+  "#64748B", "#10B981", "#F59E0B", "#F43F5E", "#D946EF", "#8B5CF6",
+  "#EC4899", "#14B8A6", "#F97316", "#78716C", "#84CC16", "#EAB308",
 ];
 
 export default function CategoriesPage() {
@@ -76,7 +76,7 @@ export default function CategoriesPage() {
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#6366F1] border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     );
   }
@@ -101,14 +101,14 @@ export default function CategoriesPage() {
               key={cat.id}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="group relative rounded-xl border border-white/8 bg-white/5 p-4 transition-colors hover:bg-white/10"
+              className="group relative rounded-xl border border-border bg-muted/40 p-4 transition-colors hover:bg-accent"
             >
               <div
                 className="mb-3 h-10 w-10 rounded-lg"
                 style={{ backgroundColor: cat.color }}
               />
-              <p className="font-medium text-white">{cat.name}</p>
-              <p className="text-xs text-[#9CA3AF]">
+              <p className="font-medium text-foreground">{cat.name}</p>
+              <p className="text-xs text-muted-foreground">
                 {cat.productsCount ?? 0} products
               </p>
               <div className="mt-3 flex gap-2">
@@ -116,7 +116,7 @@ export default function CategoriesPage() {
                   <Edit2 className="h-3 w-3" />
                   <span className="ml-1 text-xs">Edit</span>
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => handleDelete(cat.id)} title="Delete category" className="text-[#F43F5E] hover:text-[#F43F5E] hover:bg-[#F43F5E]/10">
+                <Button variant="ghost" size="sm" onClick={() => handleDelete(cat.id)} title="Delete category" className="text-destructive hover:text-destructive hover:bg-destructive/10">
                   <Trash2 className="h-3 w-3" />
                 </Button>
               </div>
@@ -126,8 +126,8 @@ export default function CategoriesPage() {
 
         {categories.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Package className="mb-3 h-12 w-12 text-[#9CA3AF]" />
-            <p className="text-[#9CA3AF]">No categories yet</p>
+            <Package className="mb-3 h-12 w-12 text-muted-foreground" />
+            <p className="text-muted-foreground">No categories yet</p>
             <Button className="mt-3" onClick={() => handleOpen()}>
               <Plus className="h-4 w-4" />
               Add First Category
@@ -146,7 +146,7 @@ export default function CategoriesPage() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Name</label>
+              <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Name</label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -154,7 +154,7 @@ export default function CategoriesPage() {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Color</label>
+              <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Color</label>
               <div className="flex flex-wrap gap-2">
                 {COLORS.map((c) => (
                   <button

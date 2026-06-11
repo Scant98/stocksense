@@ -17,24 +17,20 @@ interface StatCardProps {
 
 const accentMap = {
   primary: {
-    icon: "bg-[rgba(99,102,241,0.15)] text-[#818CF8]",
-    glow: "hover:shadow-[0_0_40px_rgba(99,102,241,0.15)]",
-    change: "text-[#818CF8]",
+    icon: "bg-primary/15 text-primary",
+    change: "text-primary",
   },
   success: {
-    icon: "bg-[rgba(16,185,129,0.15)] text-[#10B981]",
-    glow: "hover:shadow-[0_0_40px_rgba(16,185,129,0.15)]",
-    change: "text-[#10B981]",
+    icon: "bg-success/15 text-success",
+    change: "text-success",
   },
   warning: {
-    icon: "bg-[rgba(245,158,11,0.15)] text-[#F59E0B]",
-    glow: "hover:shadow-[0_0_40px_rgba(245,158,11,0.15)]",
-    change: "text-[#F59E0B]",
+    icon: "bg-warning/15 text-warning",
+    change: "text-warning",
   },
   danger: {
-    icon: "bg-[rgba(244,63,94,0.15)] text-[#F43F5E]",
-    glow: "hover:shadow-[0_0_40px_rgba(244,63,94,0.15)]",
-    change: "text-[#F43F5E]",
+    icon: "bg-destructive/15 text-destructive",
+    change: "text-destructive",
   },
 };
 
@@ -46,26 +42,23 @@ export function StatCard({ title, value, formatter, icon: Icon, change, changeLa
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay, ease: "easeOut" }}
-      whileHover={{ y: -4, scale: 1.02 }}
-      className={cn(
-        "glass rounded-2xl p-5 transition-shadow cursor-default",
-        colors.glow
-      )}
+      whileHover={{ y: -2 }}
+      className="rounded-xl border bg-card p-5 shadow-xs transition-shadow hover:shadow-md cursor-default"
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">{title}</p>
-          <p className="mt-2 text-2xl font-bold text-white">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{title}</p>
+          <p className="mt-2 text-2xl font-bold text-foreground tabular-nums">
             <AnimatedNumber value={value} formatter={formatter} duration={1000} />
           </p>
           {change !== undefined && (
             <p className={cn("mt-1 text-xs font-medium", colors.change)}>
               {change >= 0 ? "+" : ""}{change}%{" "}
-              <span className="text-[#9CA3AF] font-normal">{changeLabel ?? "vs last month"}</span>
+              <span className="text-muted-foreground font-normal">{changeLabel ?? "vs last month"}</span>
             </p>
           )}
         </div>
-        <div className={cn("flex h-11 w-11 items-center justify-center rounded-xl", colors.icon)}>
+        <div className={cn("flex h-11 w-11 items-center justify-center rounded-lg", colors.icon)}>
           <Icon className="h-5 w-5" />
         </div>
       </div>

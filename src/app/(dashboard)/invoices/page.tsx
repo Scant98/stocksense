@@ -100,7 +100,7 @@ export default function InvoicesPage() {
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#6366F1] border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     );
   }
@@ -131,17 +131,17 @@ export default function InvoicesPage() {
           className="grid grid-cols-2 gap-3 sm:grid-cols-4"
         >
           {[
-            { label: "Total Invoices", value: invoices.length.toString(), accent: "text-white" },
-            { label: "Collected (Paid)", value: formatCurrency(totalRevenue), accent: "text-[#34D399]" },
-            { label: "Outstanding", value: formatCurrency(outstanding), accent: "text-[#FBBF24]" },
+            { label: "Total Invoices", value: invoices.length.toString(), accent: "text-foreground" },
+            { label: "Collected (Paid)", value: formatCurrency(totalRevenue), accent: "text-success" },
+            { label: "Outstanding", value: formatCurrency(outstanding), accent: "text-warning" },
             {
               label: "Overdue",
               value: invoices.filter((i) => i.status === "overdue").length.toString(),
-              accent: "text-[#FB7185]",
+              accent: "text-destructive",
             },
           ].map((stat) => (
-            <div key={stat.label} className="rounded-xl border border-white/8 bg-white/3 px-4 py-3">
-              <p className="text-xs text-[#6B7280]">{stat.label}</p>
+            <div key={stat.label} className="rounded-xl border border-border bg-muted/30 px-4 py-3">
+              <p className="text-xs text-muted-foreground">{stat.label}</p>
               <p className={`mt-1 text-lg font-semibold ${stat.accent}`}>{stat.value}</p>
             </div>
           ))}
@@ -155,7 +155,7 @@ export default function InvoicesPage() {
           className="flex flex-wrap gap-3"
         >
           <div className="relative flex-1 min-w-60">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9CA3AF]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search by client or invoice number..."
               className="pl-9"
@@ -195,12 +195,12 @@ export default function InvoicesPage() {
                 onClick={() => setStatusFilter(f.value)}
                 className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
                   statusFilter === f.value
-                    ? "border-[#6366F1]/40 bg-[#6366F1]/20 text-[#818CF8]"
-                    : "border-white/10 bg-white/5 text-[#9CA3AF] hover:text-white"
+                    ? "border-primary/40 bg-primary/20 text-primary"
+                    : "border-border bg-muted/40 text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {f.label}
-                <span className="rounded-full bg-white/10 px-1.5 py-0.5 text-[10px]">{count}</span>
+                <span className="rounded-full bg-muted/60 px-1.5 py-0.5 text-[10px]">{count}</span>
               </button>
             );
           })}
@@ -249,7 +249,7 @@ export default function InvoicesPage() {
           <DialogHeader>
             <DialogTitle>
               <span className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-[#6366F1]" />
+                <FileText className="h-4 w-4 text-primary" />
                 {viewInvoice?.invoiceNumber}
               </span>
             </DialogTitle>
@@ -272,7 +272,7 @@ export default function InvoicesPage() {
               Cancel
             </Button>
             <Button
-              variant="danger"
+              variant="destructive"
               onClick={() => deleteConfirm && handleDelete(deleteConfirm)}
             >
               Delete

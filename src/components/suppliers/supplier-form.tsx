@@ -56,30 +56,30 @@ export function SupplierForm({ supplier, onSubmit, onCancel }: SupplierFormProps
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
         <div className="col-span-2">
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Company Name</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Company Name</label>
           <Input {...register("name")} placeholder="e.g. TechParts Ltd" />
-          {errors.name && <p className="mt-1 text-xs text-[#F43F5E]">{errors.name.message}</p>}
+          {errors.name && <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>}
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Email</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Email</label>
           <Input {...register("email")} type="email" placeholder="contact@supplier.com" />
-          {errors.email && <p className="mt-1 text-xs text-[#F43F5E]">{errors.email.message}</p>}
+          {errors.email && <p className="mt-1 text-xs text-destructive">{errors.email.message}</p>}
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Phone</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Phone</label>
           <Input {...register("phone")} placeholder="+255 22 000 0000" />
         </div>
         <div className="col-span-2">
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Address</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Address</label>
           <Input {...register("address")} placeholder="123 Main St, Dar es Salaam" />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Country</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Country</label>
           <Input {...register("country")} placeholder="Tanzania" />
-          {errors.country && <p className="mt-1 text-xs text-[#F43F5E]">{errors.country.message}</p>}
+          {errors.country && <p className="mt-1 text-xs text-destructive">{errors.country.message}</p>}
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Rating (0–5)</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Rating (0–5)</label>
           <Input
             type="number"
             step="0.1"
@@ -88,10 +88,10 @@ export function SupplierForm({ supplier, onSubmit, onCancel }: SupplierFormProps
             {...register("rating", { valueAsNumber: true })}
             placeholder="4.5"
           />
-          {errors.rating && <p className="mt-1 text-xs text-[#F43F5E]">{errors.rating.message}</p>}
+          {errors.rating && <p className="mt-1 text-xs text-destructive">{errors.rating.message}</p>}
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Status</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Status</label>
           <Select
             defaultValue={supplier?.status ?? "active"}
             onValueChange={(v) => setValue("status", v as "active" | "inactive")}

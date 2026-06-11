@@ -21,7 +21,7 @@ export function SparklesText({ text, className }: SparklesTextProps) {
       {[...Array(3)].map((_, i) => (
         <motion.span
           key={i}
-          className="pointer-events-none absolute text-[#6366F1]"
+          className="pointer-events-none absolute text-primary"
           style={{ top: `${["-20%", "0%", "-30%"][i]}`, left: `${["-10%", "105%", "50%"][i]}`, fontSize: "10px" }}
           animate={{ opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5], rotate: [0, 180, 360] }}
           transition={{ duration: 2, repeat: Infinity, delay: i * 0.6 }}

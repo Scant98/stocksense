@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     const category = await prisma.category.create({
       data: {
         name: body.name,
-        color: body.color ?? "#6366F1",
+        color: body.color ?? "#10B981",
         icon: body.icon ?? "Package",
       },
     });

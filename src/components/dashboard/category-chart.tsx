@@ -19,8 +19,8 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
     <div className="glass-strong rounded-xl p-3 shadow-xl">
       <div className="flex items-center gap-2 text-sm">
         <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: payload[0].payload.color }} />
-        <span className="text-white font-medium">{payload[0].name}</span>
-        <span className="text-[#9CA3AF]">{payload[0].value} units</span>
+        <span className="text-foreground font-medium">{payload[0].name}</span>
+        <span className="text-muted-foreground">{payload[0].value} units</span>
       </div>
     </div>
   );
@@ -41,8 +41,8 @@ export function CategoryChart({ data = [] }: Props) {
       className="glass rounded-2xl p-5"
     >
       <div className="mb-4">
-        <h3 className="text-sm font-medium text-[#9CA3AF]">Stock Distribution</h3>
-        <p className="text-lg font-bold text-white">By Category</p>
+        <h3 className="text-sm font-medium text-muted-foreground">Stock Distribution</h3>
+        <p className="text-lg font-bold text-foreground">By Category</p>
       </div>
       <div className="flex items-center gap-4">
         <ResponsiveContainer width="50%" height={160}>
@@ -68,11 +68,11 @@ export function CategoryChart({ data = [] }: Props) {
             <div key={cat.name} className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
-                <span className="text-[#9CA3AF] truncate">{cat.name}</span>
+                <span className="text-muted-foreground truncate">{cat.name}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-white font-medium">{cat.value}</span>
-                <span className="text-[#6B7280]">
+                <span className="text-foreground font-medium">{cat.value}</span>
+                <span className="text-muted-foreground">
                   {total > 0 ? Math.round((cat.value / total) * 100) : 0}%
                 </span>
               </div>

@@ -25,7 +25,7 @@ export function Meteors({ number = 20, className }: MeteorsProps) {
       {meteorStyles.map((style, i) => (
         <span
           key={i}
-          className="animate-meteor absolute h-0.5 w-24 rotate-[215deg] rounded-full bg-gradient-to-r from-transparent via-[#6366F1]/40 to-transparent"
+          className="animate-meteor absolute h-0.5 w-24 rotate-[215deg] rounded-full bg-gradient-to-r from-transparent via-primary/40 to-transparent"
           style={style}
         />
       ))}

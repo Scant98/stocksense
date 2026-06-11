@@ -35,7 +35,7 @@ import {
   useCreateInvoice,
   useDeleteInvoice,
 } from "@/hooks/use-api";
-import type { Invoice, Transaction } from "@/lib/types";
+import type { Invoice } from "@/lib/types";
 import { toast } from "sonner";
 
 const typeColors = {
@@ -46,10 +46,10 @@ const typeColors = {
 } as const;
 
 const invoiceStatusStyles: Record<string, string> = {
-  draft:   "bg-[#6B7280]/15 text-[#9CA3AF] border-[#6B7280]/20",
-  sent:    "bg-[#3B82F6]/15 text-[#60A5FA] border-[#3B82F6]/20",
-  paid:    "bg-[#10B981]/15 text-[#34D399] border-[#10B981]/20",
-  overdue: "bg-[#F43F5E]/15 text-[#FB7185] border-[#F43F5E]/20",
+  draft:   "bg-muted/60 text-muted-foreground border-border",
+  sent:    "bg-chart-3/15 text-chart-3 border-chart-3/20",
+  paid:    "bg-success/15 text-success border-success/20",
+  overdue: "bg-destructive/15 text-destructive border-destructive/20",
 };
 
 type Tab = "sales" | "invoices";
@@ -213,7 +213,7 @@ export default function OrdersPage() {
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#6366F1] border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     );
   }
@@ -236,10 +236,10 @@ export default function OrdersPage() {
         <BlurFade delay={0.05}>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {[
-              { label: "Today's Revenue", value: formatCurrency(todayRevenue), icon: TrendingUp, color: "#10B981" },
-              { label: "Sales Today", value: todaySales.length.toString(), icon: ShoppingCart, color: "#6366F1" },
-              { label: "Total Sales", value: sales.length.toString(), icon: ArrowUpRight, color: "#818CF8" },
-              { label: "Total Revenue", value: formatCurrency(totalSales), icon: Package, color: "#F59E0B" },
+              { label: "Today's Revenue", value: formatCurrency(todayRevenue), icon: TrendingUp, color: "var(--success)" },
+              { label: "Sales Today", value: todaySales.length.toString(), icon: ShoppingCart, color: "var(--primary)" },
+              { label: "Total Sales", value: sales.length.toString(), icon: ArrowUpRight, color: "var(--chart-3)" },
+              { label: "Total Revenue", value: formatCurrency(totalSales), icon: Package, color: "var(--warning)" },
             ].map((s, i) => (
               <motion.div
                 key={s.label}
@@ -252,8 +252,8 @@ export default function OrdersPage() {
                   <s.icon className="h-5 w-5" style={{ color: s.color }} />
                 </div>
                 <div>
-                  <p className="text-xs text-[#9CA3AF]">{s.label}</p>
-                  <p className="text-xl font-bold text-white">{s.value}</p>
+                  <p className="text-xs text-muted-foreground">{s.label}</p>
+                  <p className="text-xl font-bold text-foreground">{s.value}</p>
                 </div>
               </motion.div>
             ))}
@@ -264,9 +264,9 @@ export default function OrdersPage() {
         {topProductsToday.length > 0 && (
           <BlurFade delay={0.15}>
             <div className="glass rounded-2xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-white/8 flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-[#10B981]" />
-                <h3 className="font-semibold text-white">Top Products Today</h3>
+              <div className="px-5 py-4 border-b border-border flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-success" />
+                <h3 className="font-semibold text-foreground">Top Products Today</h3>
               </div>
               <div className="p-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                 {topProductsToday.map((p, i) => (
@@ -275,14 +275,14 @@ export default function OrdersPage() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.18 + i * 0.05 }}
-                    className="rounded-xl bg-white/5 px-4 py-3 border border-white/5"
+                    className="rounded-xl bg-muted/40 px-4 py-3 border border-border/50"
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-[#9CA3AF]">#{i + 1}</span>
-                      <span className="text-xs font-semibold text-[#10B981]">{p.qty} sold</span>
+                      <span className="text-xs text-muted-foreground">#{i + 1}</span>
+                      <span className="text-xs font-semibold text-success">{p.qty} sold</span>
                     </div>
-                    <p className="text-sm font-medium text-white truncate">{p.name}</p>
-                    <p className="text-xs text-[#9CA3AF] mt-0.5">{formatCurrency(p.revenue)}</p>
+                    <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{formatCurrency(p.revenue)}</p>
                   </motion.div>
                 ))}
               </div>
@@ -292,21 +292,21 @@ export default function OrdersPage() {
 
         {/* Tabs */}
         <BlurFade delay={0.2}>
-          <div className="flex gap-1 rounded-xl bg-white/5 p-1 w-fit border border-white/8">
+          <div className="flex gap-1 rounded-xl bg-muted/40 p-1 w-fit border border-border">
             {(["sales", "invoices"] as Tab[]).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                   tab === t
-                    ? "bg-[#6366F1] text-white shadow-sm"
-                    : "text-[#9CA3AF] hover:text-white"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {t === "sales" ? <ShoppingCart className="h-4 w-4" /> : <FileText className="h-4 w-4" />}
                 {t === "sales" ? "Sales History" : "Invoices"}
                 {t === "invoices" && invoices.length > 0 && (
-                  <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[10px]">
+                  <span className="rounded-full bg-muted/80 px-1.5 py-0.5 text-[10px]">
                     {invoices.length}
                   </span>
                 )}
@@ -326,16 +326,16 @@ export default function OrdersPage() {
               transition={{ duration: 0.2 }}
             >
               <div className="glass rounded-2xl overflow-hidden">
-                <div className="px-5 py-4 border-b border-white/8 flex items-center justify-between">
-                  <h3 className="font-semibold text-white">All Transactions</h3>
-                  <span className="text-xs text-[#9CA3AF]">{transactions.length} records</span>
+                <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+                  <h3 className="font-semibold text-foreground">All Transactions</h3>
+                  <span className="text-xs text-muted-foreground">{transactions.length} records</span>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-white/5 bg-white/2">
+                      <tr className="border-b border-border/50 bg-muted/20">
                         {["Reference", "Product", "Type", "Qty", "Unit Price", "Total", "Date"].map((h) => (
-                          <th key={h} className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">{h}</th>
+                          <th key={h} className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -346,21 +346,21 @@ export default function OrdersPage() {
                           initial={{ opacity: 0, y: 4 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.25 + i * 0.03 }}
-                          className="border-b border-white/5 hover:bg-white/3 transition-colors"
+                          className="border-b border-border/50 hover:bg-muted/30 transition-colors"
                         >
-                          <td className="px-4 py-3 font-mono text-xs text-[#9CA3AF]">{txn.reference}</td>
+                          <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{txn.reference}</td>
                           <td className="px-4 py-3">
-                            <p className="font-medium text-white">{txn.product.name}</p>
+                            <p className="font-medium text-foreground">{txn.product.name}</p>
                           </td>
                           <td className="px-4 py-3">
                             <Badge variant={typeColors[txn.type as keyof typeof typeColors] ?? "muted"} className="capitalize">{txn.type}</Badge>
                           </td>
-                          <td className="px-4 py-3 text-white">{txn.quantity}</td>
-                          <td className="px-4 py-3 text-white">{formatCurrency(txn.unitPrice)}</td>
-                          <td className={`px-4 py-3 font-semibold ${txn.type === "sale" ? "text-[#10B981]" : "text-white"}`}>
+                          <td className="px-4 py-3 text-foreground">{txn.quantity}</td>
+                          <td className="px-4 py-3 text-foreground">{formatCurrency(txn.unitPrice)}</td>
+                          <td className={`px-4 py-3 font-semibold ${txn.type === "sale" ? "text-success" : "text-foreground"}`}>
                             {formatCurrency(Math.abs(txn.totalAmount))}
                           </td>
-                          <td className="px-4 py-3 text-[#9CA3AF] text-xs">
+                          <td className="px-4 py-3 text-muted-foreground text-xs">
                             <div className="flex items-center gap-1.5">
                               <Calendar className="h-3 w-3" />
                               {formatDate(txn.createdAt)}
@@ -371,7 +371,7 @@ export default function OrdersPage() {
                     </tbody>
                   </table>
                   {transactions.length === 0 && (
-                    <p className="px-5 py-10 text-center text-sm text-[#9CA3AF]">No transactions yet</p>
+                    <p className="px-5 py-10 text-center text-sm text-muted-foreground">No transactions yet</p>
                   )}
                 </div>
               </div>
@@ -388,10 +388,10 @@ export default function OrdersPage() {
               transition={{ duration: 0.2 }}
             >
               <div className="glass rounded-2xl overflow-hidden">
-                <div className="px-5 py-4 border-b border-white/8 flex items-center justify-between">
+                <div className="px-5 py-4 border-b border-border flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <ReceiptText className="h-4 w-4 text-[#6366F1]" />
-                    <h3 className="font-semibold text-white">Invoices</h3>
+                    <ReceiptText className="h-4 w-4 text-primary" />
+                    <h3 className="font-semibold text-foreground">Invoices</h3>
                   </div>
                   <Button size="sm" onClick={() => setInvoiceFormOpen(true)}>
                     <Plus className="h-3.5 w-3.5" />
@@ -401,21 +401,21 @@ export default function OrdersPage() {
 
                 {invoicesLoading ? (
                   <div className="flex items-center justify-center py-12">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#6366F1] border-t-transparent" />
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                   </div>
                 ) : invoices.length === 0 ? (
                   <div className="py-16 text-center">
-                    <FileText className="mx-auto mb-3 h-10 w-10 text-[#374151]" />
-                    <p className="text-sm text-[#9CA3AF]">No invoices yet</p>
-                    <p className="mt-1 text-xs text-[#6B7280]">Record a sale and choose to generate an invoice</p>
+                    <FileText className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground">No invoices yet</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Record a sale and choose to generate an invoice</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-white/5 bg-white/2">
+                        <tr className="border-b border-border/50 bg-muted/20">
                           {["Invoice #", "Client", "Status", "Amount", "Date", ""].map((h) => (
-                            <th key={h} className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">{h}</th>
+                            <th key={h} className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">{h}</th>
                           ))}
                         </tr>
                       </thead>
@@ -426,20 +426,20 @@ export default function OrdersPage() {
                             initial={{ opacity: 0, y: 4 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.04 }}
-                            className="border-b border-white/5 hover:bg-white/3 transition-colors"
+                            className="border-b border-border/50 hover:bg-muted/30 transition-colors"
                           >
-                            <td className="px-4 py-3 font-mono text-xs text-[#818CF8]">{inv.invoiceNumber}</td>
+                            <td className="px-4 py-3 font-mono text-xs text-primary">{inv.invoiceNumber}</td>
                             <td className="px-4 py-3">
-                              <p className="font-medium text-white">{inv.clientName || "—"}</p>
-                              {inv.clientPhone && <p className="text-xs text-[#9CA3AF]">{inv.clientPhone}</p>}
+                              <p className="font-medium text-foreground">{inv.clientName || "—"}</p>
+                              {inv.clientPhone && <p className="text-xs text-muted-foreground">{inv.clientPhone}</p>}
                             </td>
                             <td className="px-4 py-3">
                               <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize ${invoiceStatusStyles[inv.status]}`}>
                                 {inv.status}
                               </span>
                             </td>
-                            <td className="px-4 py-3 font-semibold text-white">{formatCurrency(inv.total)}</td>
-                            <td className="px-4 py-3 text-xs text-[#9CA3AF]">
+                            <td className="px-4 py-3 font-semibold text-foreground">{formatCurrency(inv.total)}</td>
+                            <td className="px-4 py-3 text-xs text-muted-foreground">
                               <div className="flex items-center gap-1.5">
                                 <Calendar className="h-3 w-3" />
                                 {formatDate(inv.createdAt)}
@@ -453,7 +453,7 @@ export default function OrdersPage() {
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="text-[#9CA3AF] hover:text-[#F43F5E]"
+                                  className="text-muted-foreground hover:text-destructive"
                                   onClick={() => setDeleteConfirm(inv.id)}
                                   title="Delete invoice"
                                 >
@@ -482,7 +482,7 @@ export default function OrdersPage() {
           </DialogHeader>
           <form onSubmit={handleSaleSubmit} className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Product</label>
+              <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Product</label>
               <Select
                 value={productId}
                 onValueChange={(value) => {
@@ -506,7 +506,7 @@ export default function OrdersPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Quantity</label>
+                <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Quantity</label>
                 <Input
                   type="number"
                   min="1"
@@ -516,7 +516,7 @@ export default function OrdersPage() {
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Unit Price (TZS)</label>
+                <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Unit Price (TZS)</label>
                 <Input
                   type="number"
                   min="0"
@@ -529,7 +529,7 @@ export default function OrdersPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Customer / Notes</label>
+                <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Customer / Notes</label>
                 <Input
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
@@ -537,15 +537,15 @@ export default function OrdersPage() {
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Total</label>
-                <div className="flex h-10 items-center rounded-xl border border-white/10 bg-white/5 px-3 text-sm font-semibold text-white">
+                <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Total</label>
+                <div className="flex h-10 items-center rounded-xl border border-border bg-muted/40 px-3 text-sm font-semibold text-foreground">
                   {formatCurrency(saleTotal)}
                 </div>
               </div>
             </div>
 
             {selectedProduct && (
-              <p className="text-xs text-[#9CA3AF]">
+              <p className="text-xs text-muted-foreground">
                 Stock after sale: {Math.max(0, selectedProduct.quantity - (Number.isFinite(saleQuantity) ? saleQuantity : 0))} remaining
               </p>
             )}
@@ -565,7 +565,7 @@ export default function OrdersPage() {
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-[#6366F1]" />
+              <FileText className="h-5 w-5 text-primary" />
               Create Invoice?
             </DialogTitle>
             <DialogDescription>
@@ -573,9 +573,9 @@ export default function OrdersPage() {
             </DialogDescription>
           </DialogHeader>
           {lastSaleData && (
-            <div className="rounded-xl bg-white/5 border border-white/8 px-4 py-3 mb-2">
-              <p className="text-sm font-medium text-white">{lastSaleData.productName}</p>
-              <p className="text-xs text-[#9CA3AF]">
+            <div className="rounded-xl bg-muted/40 border border-border px-4 py-3 mb-2">
+              <p className="text-sm font-medium text-foreground">{lastSaleData.productName}</p>
+              <p className="text-xs text-muted-foreground">
                 {lastSaleData.quantity} × {formatCurrency(lastSaleData.unitPrice)} = {formatCurrency(lastSaleData.quantity * lastSaleData.unitPrice)}
               </p>
             </div>
@@ -616,7 +616,7 @@ export default function OrdersPage() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Printer className="h-4 w-4 text-[#6366F1]" />
+              <Printer className="h-4 w-4 text-primary" />
               {viewInvoice?.invoiceNumber}
             </DialogTitle>
           </DialogHeader>
@@ -633,7 +633,7 @@ export default function OrdersPage() {
           </DialogHeader>
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="ghost" onClick={() => setDeleteConfirm(null)}>Cancel</Button>
-            <Button variant="danger" onClick={() => deleteConfirm && handleDeleteInvoice(deleteConfirm)}>
+            <Button variant="destructive" onClick={() => deleteConfirm && handleDeleteInvoice(deleteConfirm)}>
               Delete
             </Button>
           </div>

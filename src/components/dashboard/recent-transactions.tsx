@@ -26,8 +26,8 @@ export function RecentTransactions({ transactions = [] }: Props) {
     >
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-medium text-[#9CA3AF]">Recent Activity</h3>
-          <p className="text-lg font-bold text-white">Transactions</p>
+          <h3 className="text-sm font-medium text-muted-foreground">Recent Activity</h3>
+          <p className="text-lg font-bold text-foreground">Transactions</p>
         </div>
       </div>
       <div className="space-y-2">
@@ -41,18 +41,18 @@ export function RecentTransactions({ transactions = [] }: Props) {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 + i * 0.06 }}
-              className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-white/5 transition-colors"
+              className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-accent transition-colors"
             >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/5">
-                <Icon className="h-3.5 w-3.5 text-[#9CA3AF]" />
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted/40">
+                <Icon className="h-3.5 w-3.5 text-muted-foreground" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-white">{txn.product.name}</p>
-                <p className="text-xs text-[#9CA3AF]">{formatDate(txn.createdAt)} · {txn.reference}</p>
+                <p className="truncate text-sm font-medium text-foreground">{txn.product.name}</p>
+                <p className="text-xs text-muted-foreground">{formatDate(txn.createdAt)} · {txn.reference}</p>
               </div>
               <div className="text-right shrink-0">
                 <Badge variant={config.variant} className="mb-0.5">{config.label}</Badge>
-                <p className={`text-sm font-semibold ${txn.type === "sale" ? "text-[#10B981]" : txn.totalAmount < 0 ? "text-[#F43F5E]" : "text-white"}`}>
+                <p className={`text-sm font-semibold ${txn.type === "sale" ? "text-success" : txn.totalAmount < 0 ? "text-destructive" : "text-foreground"}`}>
                   {txn.type === "sale" ? "+" : txn.totalAmount < 0 ? "-" : ""}{formatCurrency(Math.abs(txn.totalAmount))}
                 </p>
               </div>

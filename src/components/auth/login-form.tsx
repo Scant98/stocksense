@@ -12,7 +12,7 @@ export function LoginForm() {
   const [state, action, pending] = useActionState(login, undefined);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0A0F1E] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -21,22 +21,22 @@ export function LoginForm() {
       >
         {/* Logo */}
         <div className="mb-8 flex flex-col items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#6366F1] shadow-lg shadow-[rgba(99,102,241,0.4)]">
-            <Package className="h-6 w-6 text-white" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/40">
+            <Package className="h-6 w-6 text-primary-foreground" />
           </div>
           <SparklesText text="StockSense" className="text-2xl" />
-          <p className="text-sm text-[#9CA3AF]">Sign in to your account</p>
+          <p className="text-sm text-muted-foreground">Sign in to your account</p>
         </div>
 
         <form action={action} className="glass rounded-2xl p-6 space-y-4">
           {state?.message && (
-            <div className="rounded-xl bg-[#F43F5E]/10 border border-[#F43F5E]/20 px-4 py-3 text-sm text-[#F43F5E]">
+            <div className="rounded-xl bg-destructive/10 border border-destructive/20 px-4 py-3 text-sm text-destructive">
               {state.message}
             </div>
           )}
 
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
               Email address
             </label>
             <Input
@@ -47,12 +47,12 @@ export function LoginForm() {
               required
             />
             {state?.errors?.email && (
-              <p className="mt-1 text-xs text-[#F43F5E]">{state.errors.email[0]}</p>
+              <p className="mt-1 text-xs text-destructive">{state.errors.email[0]}</p>
             )}
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
               Password
             </label>
             <Input
@@ -63,7 +63,7 @@ export function LoginForm() {
               required
             />
             {state?.errors?.password && (
-              <p className="mt-1 text-xs text-[#F43F5E]">{state.errors.password[0]}</p>
+              <p className="mt-1 text-xs text-destructive">{state.errors.password[0]}</p>
             )}
           </div>
 
@@ -72,7 +72,7 @@ export function LoginForm() {
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-[#6B7280]">
+        <p className="mt-6 text-center text-xs text-muted-foreground">
           StockSense — Inventory Management · Tanzania
         </p>
       </motion.div>

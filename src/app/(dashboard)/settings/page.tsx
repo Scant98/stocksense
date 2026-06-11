@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BlurFade } from "@/components/magic/blur-fade";
 import { toast } from "sonner";
-import { useTheme, type Theme, type Accent } from "@/providers/theme-provider";
+import { useTheme, ACCENTS, type Theme, type Accent } from "@/providers/theme-provider";
 import { useUser } from "@/hooks/use-api";
 import { useUsers, useAddUser, useDeleteUser, useWipeData } from "@/hooks/use-users";
 
@@ -23,8 +23,6 @@ const sections = [
   { id: "appearance", label: "Appearance", icon: Palette },
   { id: "data", label: "Data", icon: Database },
 ];
-
-const ACCENTS: Accent[] = ["#6366F1", "#10B981", "#F59E0B", "#F43F5E", "#3B82F6", "#8B5CF6"];
 
 interface CompanyInfo {
   name: string; reg: string; email: string; phone: string; address: string; tin: string; vat: string;
@@ -87,17 +85,17 @@ export default function SettingsPage() {
                 key={s.id}
                 onClick={() => setActive(s.id)}
                 className={`relative flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors text-left ${
-                  active === s.id ? "text-white" : "text-[#9CA3AF] hover:text-white hover:bg-white/5"
+                  active === s.id ? "text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent"
                 }`}
               >
                 {active === s.id && (
                   <motion.div
                     layoutId="settingsNav"
-                    className="absolute inset-0 rounded-xl bg-[var(--color-primary)]/15 border border-[var(--color-primary)]/25"
+                    className="absolute inset-0 rounded-xl bg-primary/15 border border-primary/25"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
-                <s.icon className={`relative h-4 w-4 ${active === s.id ? "text-[var(--color-primary-hover)]" : "text-[#6B7280]"}`} />
+                <s.icon className={`relative h-4 w-4 ${active === s.id ? "text-primary" : "text-muted-foreground"}`} />
                 <span className="relative">{s.label}</span>
               </button>
             ))}
@@ -142,7 +140,7 @@ function Field({ label, value, onChange, type = "text", readOnly = false }: {
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">{label}</label>
+      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">{label}</label>
       <Input
         type={type}
         value={value}
@@ -157,7 +155,7 @@ function CompanySection({ company, setCompany }: { company: CompanyInfo; setComp
   const upd = (k: keyof CompanyInfo) => (v: string) => setCompany({ ...company, [k]: v });
   return (
     <div className="space-y-5">
-      <h2 className="text-base font-semibold text-white">Company Information</h2>
+      <h2 className="text-base font-semibold text-foreground">Company Information</h2>
       <div className="grid grid-cols-2 gap-4">
         <Field label="Company Name" value={company.name} onChange={upd("name")} />
         <Field label="Registration No." value={company.reg} onChange={upd("reg")} />
@@ -181,13 +179,13 @@ function NotifSection({ notif, setNotif }: { notif: NotifPrefs; setNotif: (n: No
   ];
   return (
     <div className="space-y-5">
-      <h2 className="text-base font-semibold text-white">Notification Preferences</h2>
+      <h2 className="text-base font-semibold text-foreground">Notification Preferences</h2>
       <div className="space-y-3">
         {items.map((item) => (
-          <div key={item.key} className="flex items-start justify-between rounded-xl bg-white/5 px-4 py-3">
+          <div key={item.key} className="flex items-start justify-between rounded-xl bg-muted/40 px-4 py-3">
             <div>
-              <p className="text-sm font-medium text-white">{item.label}</p>
-              <p className="text-xs text-[#9CA3AF]">{item.desc}</p>
+              <p className="text-sm font-medium text-foreground">{item.label}</p>
+              <p className="text-xs text-muted-foreground">{item.desc}</p>
             </div>
             <Toggle on={notif[item.key]} onChange={(v) => setNotif({ ...notif, [item.key]: v })} />
           </div>
@@ -201,7 +199,7 @@ function RegionalSection({ regional, setRegional }: { regional: RegionalInfo; se
   const upd = (k: keyof RegionalInfo) => (v: string) => setRegional({ ...regional, [k]: v });
   return (
     <div className="space-y-5">
-      <h2 className="text-base font-semibold text-white">Regional Settings</h2>
+      <h2 className="text-base font-semibold text-foreground">Regional Settings</h2>
       <div className="grid grid-cols-2 gap-4">
         <Field label="Currency" value="TZS — Tanzanian Shilling" readOnly />
         <Field label="Language" value={regional.language} onChange={upd("language")} />
@@ -241,7 +239,7 @@ function SecuritySection() {
 
   return (
     <div className="space-y-5">
-      <h2 className="text-base font-semibold text-white">Security</h2>
+      <h2 className="text-base font-semibold text-foreground">Security</h2>
       <div className="space-y-4 max-w-md">
         <Field label="Current Password" value={current} onChange={setCurrent} type="password" />
         <Field label="New Password" value={next} onChange={setNext} type="password" />
@@ -265,10 +263,10 @@ function AppearanceSection() {
 
   return (
     <div className="space-y-5">
-      <h2 className="text-base font-semibold text-white">Appearance</h2>
+      <h2 className="text-base font-semibold text-foreground">Appearance</h2>
       <div className="space-y-4">
         <div>
-          <p className="mb-3 text-sm font-medium text-[#9CA3AF]">Theme</p>
+          <p className="mb-3 text-sm font-medium text-muted-foreground">Theme</p>
           <div className="grid grid-cols-3 gap-3">
             {themes.map((t) => (
               <button
@@ -276,8 +274,8 @@ function AppearanceSection() {
                 onClick={() => { setTheme(t.value); toast.success(`Theme: ${t.label}`); }}
                 className={`flex flex-col items-center gap-2 rounded-xl border p-4 text-sm transition-all ${
                   theme === t.value
-                    ? "border-[var(--color-primary)]/40 bg-[var(--color-primary)]/10 text-white scale-[1.02]"
-                    : "border-white/10 text-[#9CA3AF] hover:border-white/20"
+                    ? "border-primary/40 bg-primary/10 text-foreground scale-[1.02]"
+                    : "border-border text-muted-foreground hover:border-border"
                 }`}
               >
                 <span className="text-2xl">{t.icon}</span>
@@ -287,16 +285,17 @@ function AppearanceSection() {
           </div>
         </div>
         <div>
-          <p className="mb-2 text-sm font-medium text-[#9CA3AF]">Accent Color</p>
+          <p className="mb-2 text-sm font-medium text-muted-foreground">Accent Color</p>
           <div className="flex gap-2">
-            {ACCENTS.map((color) => (
+            {(Object.keys(ACCENTS) as Accent[]).map((key) => (
               <button
-                key={color}
-                onClick={() => { setAccent(color); toast.success("Accent updated"); }}
+                key={key}
+                title={ACCENTS[key].label}
+                onClick={() => { setAccent(key); toast.success(`Accent: ${ACCENTS[key].label}`); }}
                 className={`h-8 w-8 rounded-full border-2 transition-transform hover:scale-110 ${
-                  color === accent ? "border-white scale-110" : "border-transparent"
+                  key === accent ? "border-foreground scale-110" : "border-transparent"
                 }`}
-                style={{ backgroundColor: color }}
+                style={{ backgroundColor: ACCENTS[key].color }}
               />
             ))}
           </div>
@@ -316,8 +315,8 @@ function UsersSection({ isAdmin, currentUserId }: { isAdmin: boolean; currentUse
   if (!isAdmin) {
     return (
       <div className="space-y-3">
-        <h2 className="text-base font-semibold text-white">Users</h2>
-        <div className="rounded-xl border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-4 text-sm text-[#FBBF24]">
+        <h2 className="text-base font-semibold text-foreground">Users</h2>
+        <div className="rounded-xl border border-warning/30 bg-warning/10 p-4 text-sm text-warning">
           Only admins can manage users.
         </div>
       </div>
@@ -347,10 +346,10 @@ function UsersSection({ isAdmin, currentUserId }: { isAdmin: boolean; currentUse
 
   return (
     <div className="space-y-6">
-      <h2 className="text-base font-semibold text-white">Users & Access</h2>
+      <h2 className="text-base font-semibold text-foreground">Users & Access</h2>
 
-      <form onSubmit={submit} className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-3">
-        <p className="text-sm font-medium text-white flex items-center gap-2">
+      <form onSubmit={submit} className="rounded-xl border border-border bg-muted/40 p-4 space-y-3">
+        <p className="text-sm font-medium text-foreground flex items-center gap-2">
           <UserPlus className="h-4 w-4" /> Add new user
         </p>
         <div className="grid grid-cols-2 gap-3">
@@ -360,7 +359,7 @@ function UsersSection({ isAdmin, currentUserId }: { isAdmin: boolean; currentUse
           <select
             value={form.role}
             onChange={(e) => setForm({ ...form, role: e.target.value as typeof form.role })}
-            className="h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white outline-none focus:border-[var(--color-primary)]/50"
+            className="h-9 rounded-lg border border-border bg-muted/40 px-3 text-sm text-foreground outline-none focus:border-primary/50"
           >
             <option value="user">User</option>
             <option value="manager">Manager</option>
@@ -374,35 +373,35 @@ function UsersSection({ isAdmin, currentUserId }: { isAdmin: boolean; currentUse
       </form>
 
       <div>
-        <p className="mb-3 text-sm font-medium text-[#9CA3AF]">Existing users ({users.length})</p>
+        <p className="mb-3 text-sm font-medium text-muted-foreground">Existing users ({users.length})</p>
         {isLoading ? (
-          <div className="text-sm text-[#9CA3AF]">Loading…</div>
+          <div className="text-sm text-muted-foreground">Loading…</div>
         ) : (
           <div className="space-y-2">
             {users.map((u) => (
-              <div key={u.id} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+              <div key={u.id} className="flex items-center justify-between rounded-xl border border-border bg-muted/40 px-4 py-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-hover)] flex items-center justify-center text-xs font-bold text-white shrink-0">
+                  <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-primary-foreground shrink-0">
                     {u.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                   </div>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-white">
-                      {u.name} {u.id === currentUserId && <span className="text-xs text-[#9CA3AF]">(you)</span>}
+                    <p className="truncate text-sm font-medium text-foreground">
+                      {u.name} {u.id === currentUserId && <span className="text-xs text-muted-foreground">(you)</span>}
                     </p>
-                    <p className="truncate text-xs text-[#9CA3AF]">{u.email}</p>
+                    <p className="truncate text-xs text-muted-foreground">{u.email}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${
-                    u.role === "admin" ? "bg-[#F43F5E]/15 text-[#FB7185]"
-                    : u.role === "manager" ? "bg-[#F59E0B]/15 text-[#FBBF24]"
-                    : "bg-white/10 text-[#9CA3AF]"
+                    u.role === "admin" ? "bg-destructive/15 text-destructive"
+                    : u.role === "manager" ? "bg-warning/15 text-warning"
+                    : "bg-muted/60 text-muted-foreground"
                   }`}>{u.role}</span>
                   {u.id !== currentUserId && (
                     <button
                       onClick={() => remove(u.id, u.email)}
                       disabled={deleteUser.isPending}
-                      className="text-[#9CA3AF] hover:text-[#F43F5E] transition-colors"
+                      className="text-muted-foreground hover:text-destructive transition-colors"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -424,8 +423,8 @@ function DataSection({ isAdmin }: { isAdmin: boolean }) {
   if (!isAdmin) {
     return (
       <div className="space-y-3">
-        <h2 className="text-base font-semibold text-white">Data Management</h2>
-        <div className="rounded-xl border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-4 text-sm text-[#FBBF24]">
+        <h2 className="text-base font-semibold text-foreground">Data Management</h2>
+        <div className="rounded-xl border border-warning/30 bg-warning/10 p-4 text-sm text-warning">
           Only admins can manage data.
         </div>
       </div>
@@ -449,11 +448,11 @@ function DataSection({ isAdmin }: { isAdmin: boolean }) {
 
   return (
     <div className="space-y-5">
-      <h2 className="text-base font-semibold text-white">Data Management</h2>
+      <h2 className="text-base font-semibold text-foreground">Data Management</h2>
 
-      <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-3">
-        <p className="text-sm font-medium text-white">Selective cleanup</p>
-        <p className="text-xs text-[#9CA3AF]">Remove demo / dummy records by category. Users are preserved.</p>
+      <div className="rounded-xl border border-border bg-muted/40 p-4 space-y-3">
+        <p className="text-sm font-medium text-foreground">Selective cleanup</p>
+        <p className="text-xs text-muted-foreground">Remove demo / dummy records by category. Users are preserved.</p>
         <div className="grid grid-cols-2 gap-2 pt-1">
           {[
             { scope: ["transactions"], label: "transactions" },
@@ -475,12 +474,12 @@ function DataSection({ isAdmin }: { isAdmin: boolean }) {
         </div>
       </div>
 
-      <div className="rounded-xl border border-[#F43F5E]/30 bg-[#F43F5E]/5 p-4 space-y-3">
+      <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 space-y-3">
         <div className="flex items-start gap-2">
-          <AlertTriangle className="h-5 w-5 text-[#F43F5E] shrink-0 mt-0.5" />
+          <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-white">Wipe all data & start clean</p>
-            <p className="text-xs text-[#9CA3AF] mt-0.5">
+            <p className="text-sm font-medium text-foreground">Wipe all data & start clean</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
               Deletes all products, suppliers, categories, transactions, and invoices. Your user account is kept.
             </p>
           </div>
@@ -494,7 +493,7 @@ function DataSection({ isAdmin }: { isAdmin: boolean }) {
           variant="outline"
           disabled={wipe.isPending || confirmText !== "DELETE"}
           onClick={() => doWipe(["all"], "ALL data")}
-          className="border-[#F43F5E]/40 text-[#FB7185] hover:bg-[#F43F5E]/10"
+          className="border-destructive/40 text-destructive hover:bg-destructive/10"
         >
           {wipe.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
           Wipe everything
@@ -509,7 +508,7 @@ function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void 
     <button
       type="button"
       onClick={() => onChange(!on)}
-      className={`relative h-5 w-9 rounded-full transition-colors ${on ? "bg-[var(--color-primary)]" : "bg-white/20"}`}
+      className={`relative h-5 w-9 rounded-full transition-colors ${on ? "bg-primary" : "bg-muted/80"}`}
     >
       <motion.div
         animate={{ x: on ? 16 : 2 }}

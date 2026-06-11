@@ -32,8 +32,8 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const CATEGORY_COLORS = [
-  "#6366F1", "#10B981", "#F59E0B", "#F43F5E", "#3B82F6", "#8B5CF6",
-  "#EC4899", "#14B8A6", "#F97316", "#06B6D4", "#84CC16", "#EAB308",
+  "#64748B", "#10B981", "#F59E0B", "#F43F5E", "#D946EF", "#8B5CF6",
+  "#EC4899", "#14B8A6", "#F97316", "#78716C", "#84CC16", "#EAB308",
 ];
 
 interface ProductFormProps {
@@ -123,17 +123,17 @@ export function ProductForm({
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
         <div className="col-span-2">
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Product Name</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Product Name</label>
           <Input {...register("name")} placeholder="e.g. Samsung Galaxy A54" />
-          {errors.name && <p className="mt-1 text-xs text-[#F43F5E]">{errors.name.message}</p>}
+          {errors.name && <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>}
         </div>
         <div>
           <div className="mb-1.5 flex items-center justify-between gap-2">
-            <label className="block text-xs font-medium text-[#9CA3AF]">Category</label>
+            <label className="block text-xs font-medium text-muted-foreground">Category</label>
             <button
               type="button"
               onClick={() => setCategoryOpen(true)}
-              className="inline-flex items-center gap-1 text-xs font-medium text-[#818CF8] hover:text-white"
+              className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:text-foreground"
             >
               <Plus className="h-3 w-3" />
               New
@@ -155,30 +155,30 @@ export function ProductForm({
               ))}
             </SelectContent>
           </Select>
-          {errors.categoryId && <p className="mt-1 text-xs text-[#F43F5E]">{errors.categoryId.message}</p>}
+          {errors.categoryId && <p className="mt-1 text-xs text-destructive">{errors.categoryId.message}</p>}
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Quantity</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Quantity</label>
           <Input type="number" {...register("quantity", { valueAsNumber: true })} placeholder="0" />
-          {errors.quantity && <p className="mt-1 text-xs text-[#F43F5E]">{errors.quantity.message}</p>}
+          {errors.quantity && <p className="mt-1 text-xs text-destructive">{errors.quantity.message}</p>}
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Reorder Point</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Reorder Point</label>
           <Input type="number" {...register("reorderPoint", { valueAsNumber: true })} placeholder="10" />
-          {errors.reorderPoint && <p className="mt-1 text-xs text-[#F43F5E]">{errors.reorderPoint.message}</p>}
+          {errors.reorderPoint && <p className="mt-1 text-xs text-destructive">{errors.reorderPoint.message}</p>}
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Cost Price (TZS)</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Cost Price (TZS)</label>
           <Input type="number" {...register("unitPrice", { valueAsNumber: true })} placeholder="50000" />
-          {errors.unitPrice && <p className="mt-1 text-xs text-[#F43F5E]">{errors.unitPrice.message}</p>}
+          {errors.unitPrice && <p className="mt-1 text-xs text-destructive">{errors.unitPrice.message}</p>}
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Selling Price (TZS)</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Selling Price (TZS)</label>
           <Input type="number" {...register("sellingPrice", { valueAsNumber: true })} placeholder="75000" />
-          {errors.sellingPrice && <p className="mt-1 text-xs text-[#F43F5E]">{errors.sellingPrice.message}</p>}
+          {errors.sellingPrice && <p className="mt-1 text-xs text-destructive">{errors.sellingPrice.message}</p>}
         </div>
         <div className="col-span-2">
-          <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Description (optional)</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Description (optional)</label>
           <Input {...register("description")} placeholder="Product description..." />
         </div>
       </div>
@@ -196,7 +196,7 @@ export function ProductForm({
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Name</label>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Name</label>
             <Input
               value={categoryName}
               onChange={(event) => setCategoryName(event.target.value)}
@@ -204,7 +204,7 @@ export function ProductForm({
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Color</label>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Color</label>
             <div className="flex flex-wrap gap-2">
               {CATEGORY_COLORS.map((color) => (
                 <button

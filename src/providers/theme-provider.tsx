@@ -2,7 +2,17 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 
 export type Theme = "dark" | "light" | "system";
-export type Accent = "#6366F1" | "#10B981" | "#F59E0B" | "#F43F5E" | "#3B82F6" | "#8B5CF6";
+export type Accent = "emerald" | "violet" | "amber" | "rose" | "orange";
+
+export const DEFAULT_ACCENT: Accent = "emerald";
+
+export const ACCENTS: Record<Accent, { label: string; color: string; foreground: string }> = {
+  emerald: { label: "Emerald", color: "#10B981", foreground: "#06281d" },
+  violet: { label: "Violet", color: "#8B5CF6", foreground: "#ffffff" },
+  amber: { label: "Amber", color: "#F59E0B", foreground: "#231a05" },
+  rose: { label: "Rose", color: "#F43F5E", foreground: "#ffffff" },
+  orange: { label: "Orange", color: "#F97316", foreground: "#2b1503" },
+};
 
 interface ThemeContextValue {
   theme: Theme;
@@ -14,14 +24,11 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const ACCENT_HOVER: Record<Accent, string> = {
-  "#6366F1": "#818CF8",
-  "#10B981": "#34D399",
-  "#F59E0B": "#FBBF24",
-  "#F43F5E": "#FB7185",
-  "#3B82F6": "#60A5FA",
-  "#8B5CF6": "#A78BFA",
-};
+function isAccent(value: string | null): value is Accent {
+  return value !== null && value in ACCENTS;
+}
+
+const ACCENT_VARS = ["--primary", "--ring", "--sidebar-primary", "--sidebar-ring"] as const;
 
 function applyTheme(theme: Theme, accent: Accent) {
   if (typeof document === "undefined") return;
@@ -33,18 +40,27 @@ function applyTheme(theme: Theme, accent: Accent) {
       : theme;
   const root = document.documentElement;
   root.dataset.theme = resolved;
-  root.style.colorScheme = resolved;
-  root.style.setProperty("--color-primary", accent);
-  root.style.setProperty("--color-primary-hover", ACCENT_HOVER[accent]);
+
+  if (accent === DEFAULT_ACCENT) {
+    for (const v of ACCENT_VARS) root.style.removeProperty(v);
+    root.style.removeProperty("--primary-foreground");
+    root.style.removeProperty("--sidebar-primary-foreground");
+  } else {
+    const { color, foreground } = ACCENTS[accent];
+    for (const v of ACCENT_VARS) root.style.setProperty(v, color);
+    root.style.setProperty("--primary-foreground", foreground);
+    root.style.setProperty("--sidebar-primary-foreground", foreground);
+  }
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("dark");
-  const [accent, setAccentState] = useState<Accent>("#6366F1");
+  const [accent, setAccentState] = useState<Accent>(DEFAULT_ACCENT);
 
   useEffect(() => {
     const t = (localStorage.getItem("stocksense:theme") as Theme) || "dark";
-    const a = (localStorage.getItem("stocksense:accent") as Accent) || "#6366F1";
+    const storedAccent = localStorage.getItem("stocksense:accent");
+    const a = isAccent(storedAccent) ? storedAccent : DEFAULT_ACCENT;
     setThemeState(t);
     setAccentState(a);
     applyTheme(t, a);

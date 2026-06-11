@@ -1,15 +1,16 @@
-import { Sidebar } from "@/components/layout/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { QueryProvider } from "@/providers/query-provider";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <QueryProvider>
-      <div className="flex h-screen overflow-hidden">
-        <Sidebar />
-        <main className="ml-64 flex-1 overflow-y-auto">
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset className="overflow-x-hidden">
           {children}
-        </main>
-      </div>
+        </SidebarInset>
+      </SidebarProvider>
     </QueryProvider>
   );
 }

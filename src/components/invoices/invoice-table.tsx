@@ -5,10 +5,10 @@ import type { Invoice, InvoiceStatus } from "@/lib/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 const STATUS_STYLES: Record<InvoiceStatus, string> = {
-  draft: "bg-[#6B7280]/20 text-[#9CA3AF] border-[#6B7280]/30",
-  sent: "bg-[#3B82F6]/20 text-[#60A5FA] border-[#3B82F6]/30",
-  paid: "bg-[#10B981]/20 text-[#34D399] border-[#10B981]/30",
-  overdue: "bg-[#F43F5E]/20 text-[#FB7185] border-[#F43F5E]/30",
+  draft: "bg-muted/60 text-muted-foreground border-border",
+  sent: "bg-chart-3/20 text-chart-3 border-chart-3/30",
+  paid: "bg-success/20 text-success border-success/30",
+  overdue: "bg-destructive/20 text-destructive border-destructive/30",
 };
 
 interface InvoiceTableProps {
@@ -21,26 +21,26 @@ interface InvoiceTableProps {
 export function InvoiceTable({ invoices, onView, onEdit, onDelete }: InvoiceTableProps) {
   if (invoices.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-white/8 bg-white/3 py-20 text-center">
-        <FileText className="mb-3 h-10 w-10 text-[#374151]" />
-        <p className="text-sm font-medium text-[#9CA3AF]">No invoices yet</p>
-        <p className="mt-1 text-xs text-[#6B7280]">Create your first invoice to get started</p>
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-muted/30 py-20 text-center">
+        <FileText className="mb-3 h-10 w-10 text-muted-foreground" />
+        <p className="text-sm font-medium text-muted-foreground">No invoices yet</p>
+        <p className="mt-1 text-xs text-muted-foreground">Create your first invoice to get started</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/8">
+    <div className="overflow-hidden rounded-2xl border border-border">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-white/8 bg-white/3">
-            <th className="px-4 py-3 text-left text-xs font-medium text-[#6B7280]">Invoice #</th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-[#6B7280]">Client</th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-[#6B7280]">Date</th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-[#6B7280]">Due Date</th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-[#6B7280]">Status</th>
-            <th className="px-4 py-3 text-right text-xs font-medium text-[#6B7280]">Total</th>
-            <th className="px-4 py-3 text-right text-xs font-medium text-[#6B7280]">Actions</th>
+          <tr className="border-b border-border bg-muted/30">
+            <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Invoice #</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Client</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Date</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Due Date</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Status</th>
+            <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Total</th>
+            <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -50,23 +50,23 @@ export function InvoiceTable({ invoices, onView, onEdit, onDelete }: InvoiceTabl
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="border-b border-white/5 hover:bg-white/3 transition-colors"
+              className="border-b border-border/50 hover:bg-muted/30 transition-colors"
             >
               <td className="px-4 py-3">
-                <span className="font-mono text-sm font-medium text-[#818CF8]">
+                <span className="font-mono text-sm font-medium text-primary">
                   {inv.invoiceNumber}
                 </span>
               </td>
               <td className="px-4 py-3">
-                <p className="text-sm font-medium text-white">{inv.clientName}</p>
+                <p className="text-sm font-medium text-foreground">{inv.clientName}</p>
                 {inv.clientEmail && (
-                  <p className="text-xs text-[#6B7280]">{inv.clientEmail}</p>
+                  <p className="text-xs text-muted-foreground">{inv.clientEmail}</p>
                 )}
               </td>
-              <td className="px-4 py-3 text-sm text-[#9CA3AF]">
+              <td className="px-4 py-3 text-sm text-muted-foreground">
                 {formatDate(inv.createdAt)}
               </td>
-              <td className="px-4 py-3 text-sm text-[#9CA3AF]">
+              <td className="px-4 py-3 text-sm text-muted-foreground">
                 {inv.dueDate ? formatDate(inv.dueDate) : "—"}
               </td>
               <td className="px-4 py-3">
@@ -76,28 +76,28 @@ export function InvoiceTable({ invoices, onView, onEdit, onDelete }: InvoiceTabl
                   {inv.status}
                 </span>
               </td>
-              <td className="px-4 py-3 text-right text-sm font-semibold text-white">
+              <td className="px-4 py-3 text-right text-sm font-semibold text-foreground">
                 {formatCurrency(inv.total)}
               </td>
               <td className="px-4 py-3">
                 <div className="flex justify-end gap-1">
                   <button
                     onClick={() => onView(inv)}
-                    className="rounded-lg p-1.5 text-[#6B7280] hover:text-[#818CF8] hover:bg-[#6366F1]/10 transition-colors"
+                    className="rounded-lg p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
                     title="View"
                   >
                     <Eye className="h-3.5 w-3.5" />
                   </button>
                   <button
                     onClick={() => onEdit(inv)}
-                    className="rounded-lg p-1.5 text-[#6B7280] hover:text-white hover:bg-white/10 transition-colors"
+                    className="rounded-lg p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                     title="Edit"
                   >
                     <Pencil className="h-3.5 w-3.5" />
                   </button>
                   <button
                     onClick={() => onDelete(inv.id)}
-                    className="rounded-lg p-1.5 text-[#6B7280] hover:text-[#F43F5E] hover:bg-[#F43F5E]/10 transition-colors"
+                    className="rounded-lg p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                     title="Delete"
                   >
                     <Trash2 className="h-3.5 w-3.5" />

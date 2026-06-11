@@ -78,7 +78,7 @@ export default function SuppliersPage() {
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#6366F1] border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     );
   }
@@ -104,7 +104,7 @@ export default function SuppliersPage() {
           transition={{ delay: 0.1 }}
           className="relative max-w-sm"
         >
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9CA3AF]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search suppliers..."
             className="pl-9"
@@ -126,28 +126,28 @@ export default function SuppliersPage() {
               <BlurFade key={supplier.id} delay={0.1 + i * 0.07}>
                 <motion.div
                   whileHover={{ y: -4, scale: 1.01 }}
-                  className="glass rounded-2xl p-5 hover:shadow-[0_0_40px_rgba(99,102,241,0.1)] transition-shadow"
+                  className="glass rounded-2xl p-5 transition-shadow"
                 >
                   {/* Header */}
                   <div className="mb-4 flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#6366F1] to-[#818CF8] text-base font-bold text-white shadow-lg shadow-[rgba(99,102,241,0.3)]">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-base font-bold text-primary-foreground">
                         {supplier.name.charAt(0)}
                       </div>
                       <div>
-                        <p className="font-semibold text-white">{supplier.name}</p>
+                        <p className="font-semibold text-foreground">{supplier.name}</p>
                         <div className="flex items-center gap-1 mt-0.5">
                           {Array.from({ length: 5 }, (_, j) => (
                             <Star
                               key={j}
                               className={`h-3 w-3 ${
                                 j < Math.floor(supplier.rating)
-                                  ? "fill-[#F59E0B] text-[#F59E0B]"
-                                  : "text-white/20"
+                                  ? "fill-warning text-warning"
+                                  : "text-muted-foreground/30"
                               }`}
                             />
                           ))}
-                          <span className="ml-1 text-xs text-[#9CA3AF]">{supplier.rating}</span>
+                          <span className="ml-1 text-xs text-muted-foreground">{supplier.rating}</span>
                         </div>
                       </div>
                     </div>
@@ -157,14 +157,14 @@ export default function SuppliersPage() {
                       </Badge>
                       <button
                         onClick={() => setEditSupplier(supplier)}
-                        className="rounded-lg p-1.5 text-[#9CA3AF] hover:bg-white/10 hover:text-white transition-colors"
+                        className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
                         title="Edit"
                       >
                         <Pencil className="h-3.5 w-3.5" />
                       </button>
                       <button
                         onClick={() => setDeleteConfirm(supplier.id)}
-                        className="rounded-lg p-1.5 text-[#9CA3AF] hover:bg-[#F43F5E]/10 hover:text-[#F43F5E] transition-colors"
+                        className="rounded-lg p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
                         title="Delete"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -174,18 +174,18 @@ export default function SuppliersPage() {
 
                   {/* Contact */}
                   <div className="mb-4 space-y-1.5">
-                    <div className="flex items-center gap-2 text-xs text-[#9CA3AF]">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Mail className="h-3.5 w-3.5 shrink-0" />
                       <span className="truncate">{supplier.email}</span>
                     </div>
                     {supplier.phone && (
-                      <div className="flex items-center gap-2 text-xs text-[#9CA3AF]">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Phone className="h-3.5 w-3.5 shrink-0" />
                         <span>{supplier.phone}</span>
                       </div>
                     )}
                     {supplier.address && (
-                      <div className="flex items-center gap-2 text-xs text-[#9CA3AF]">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <MapPin className="h-3.5 w-3.5 shrink-0" />
                         <span className="truncate">{supplier.address}</span>
                       </div>
@@ -193,20 +193,20 @@ export default function SuppliersPage() {
                   </div>
 
                   {/* Stats */}
-                  <div className="grid grid-cols-3 gap-2 border-t border-white/8 pt-4">
+                  <div className="grid grid-cols-3 gap-2 border-t border-border pt-4">
                     <div className="text-center">
-                      <p className="text-lg font-bold text-white">{supplier.totalOrders}</p>
-                      <p className="text-[10px] text-[#9CA3AF]">Orders</p>
+                      <p className="text-lg font-bold text-foreground">{supplier.totalOrders}</p>
+                      <p className="text-[10px] text-muted-foreground">Orders</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-lg font-bold text-white">{supplierProducts.length}</p>
-                      <p className="text-[10px] text-[#9CA3AF]">Products</p>
+                      <p className="text-lg font-bold text-foreground">{supplierProducts.length}</p>
+                      <p className="text-[10px] text-muted-foreground">Products</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-lg font-bold text-[#10B981]">
+                      <p className="text-lg font-bold text-success">
                         {(totalValue / 1000000).toFixed(1)}M
                       </p>
-                      <p className="text-[10px] text-[#9CA3AF]">Stock Val.</p>
+                      <p className="text-[10px] text-muted-foreground">Stock Val.</p>
                     </div>
                   </div>
                 </motion.div>
@@ -215,7 +215,7 @@ export default function SuppliersPage() {
           })}
 
           {filtered.length === 0 && (
-            <p className="col-span-3 py-16 text-center text-sm text-[#9CA3AF]">
+            <p className="col-span-3 py-16 text-center text-sm text-muted-foreground">
               No suppliers found
             </p>
           )}
@@ -262,7 +262,7 @@ export default function SuppliersPage() {
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="ghost" onClick={() => setDeleteConfirm(null)}>Cancel</Button>
             <Button
-              variant="danger"
+              variant="destructive"
               onClick={() => deleteConfirm && handleDelete(deleteConfirm)}
             >
               Delete

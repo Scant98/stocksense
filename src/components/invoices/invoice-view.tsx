@@ -5,10 +5,10 @@ import type { Invoice, InvoiceStatus } from "@/lib/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 const STATUS_STYLES: Record<InvoiceStatus, string> = {
-  draft: "bg-[#6B7280]/20 text-[#9CA3AF] border-[#6B7280]/30",
-  sent: "bg-[#3B82F6]/20 text-[#60A5FA] border-[#3B82F6]/30",
-  paid: "bg-[#10B981]/20 text-[#34D399] border-[#10B981]/30",
-  overdue: "bg-[#F43F5E]/20 text-[#FB7185] border-[#F43F5E]/30",
+  draft: "bg-muted/60 text-muted-foreground border-border",
+  sent: "bg-chart-3/20 text-chart-3 border-chart-3/30",
+  paid: "bg-success/20 text-success border-success/30",
+  overdue: "bg-destructive/20 text-destructive border-destructive/30",
 };
 
 function printInvoice(inv: Invoice) {
@@ -34,14 +34,14 @@ function printInvoice(inv: Invoice) {
     *{margin:0;padding:0;box-sizing:border-box}
     body{font-family:system-ui,-apple-system,sans-serif;color:#111827;padding:48px;font-size:14px}
     .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px}
-    .brand{font-size:22px;font-weight:700;color:#6366F1;letter-spacing:-0.5px}
+    .brand{font-size:22px;font-weight:700;color:#059669;letter-spacing:-0.5px}
     .brand-sub{font-size:12px;color:#9CA3AF;margin-top:2px}
     .inv-meta{text-align:right}
     .inv-num{font-size:20px;font-weight:700;color:#111827}
     .inv-date{font-size:12px;color:#6B7280;margin-top:4px}
     .status{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:6px}
     .status-draft{background:#f3f4f6;color:#6B7280}
-    .status-sent{background:#eff6ff;color:#3B82F6}
+    .status-sent{background:#f5f3ff;color:#7C3AED}
     .status-paid{background:#ecfdf5;color:#10B981}
     .status-overdue{background:#fff1f2;color:#F43F5E}
     .section{margin-bottom:32px}
@@ -129,10 +129,10 @@ export function InvoiceView({ invoice }: InvoiceViewProps) {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <p className="font-mono text-lg font-bold text-[#818CF8]">{invoice.invoiceNumber}</p>
-          <p className="text-xs text-[#6B7280]">Issued {formatDate(invoice.createdAt)}</p>
+          <p className="font-mono text-lg font-bold text-primary">{invoice.invoiceNumber}</p>
+          <p className="text-xs text-muted-foreground">Issued {formatDate(invoice.createdAt)}</p>
           {invoice.dueDate && (
-            <p className="text-xs text-[#6B7280]">Due {formatDate(invoice.dueDate)}</p>
+            <p className="text-xs text-muted-foreground">Due {formatDate(invoice.dueDate)}</p>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -153,34 +153,34 @@ export function InvoiceView({ invoice }: InvoiceViewProps) {
       </div>
 
       {/* Client */}
-      <div className="rounded-xl bg-white/5 px-4 py-3">
-        <p className="mb-1 text-xs font-medium text-[#9CA3AF]">Bill To</p>
-        <p className="font-medium text-white">{invoice.clientName}</p>
-        {invoice.clientEmail && <p className="text-sm text-[#9CA3AF]">{invoice.clientEmail}</p>}
-        {invoice.clientPhone && <p className="text-sm text-[#9CA3AF]">{invoice.clientPhone}</p>}
-        {invoice.clientAddress && <p className="text-sm text-[#9CA3AF]">{invoice.clientAddress}</p>}
+      <div className="rounded-xl bg-muted/40 px-4 py-3">
+        <p className="mb-1 text-xs font-medium text-muted-foreground">Bill To</p>
+        <p className="font-medium text-foreground">{invoice.clientName}</p>
+        {invoice.clientEmail && <p className="text-sm text-muted-foreground">{invoice.clientEmail}</p>}
+        {invoice.clientPhone && <p className="text-sm text-muted-foreground">{invoice.clientPhone}</p>}
+        {invoice.clientAddress && <p className="text-sm text-muted-foreground">{invoice.clientAddress}</p>}
       </div>
 
       {/* Items */}
       <div>
-        <p className="mb-2 text-xs font-medium text-[#9CA3AF]">Line Items</p>
-        <div className="overflow-hidden rounded-xl border border-white/8">
+        <p className="mb-2 text-xs font-medium text-muted-foreground">Line Items</p>
+        <div className="overflow-hidden rounded-xl border border-border">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/8 bg-white/3">
-                <th className="px-3 py-2 text-left text-xs text-[#6B7280]">Description</th>
-                <th className="px-3 py-2 text-center text-xs text-[#6B7280]">Qty</th>
-                <th className="px-3 py-2 text-right text-xs text-[#6B7280]">Unit Price</th>
-                <th className="px-3 py-2 text-right text-xs text-[#6B7280]">Total</th>
+              <tr className="border-b border-border bg-muted/30">
+                <th className="px-3 py-2 text-left text-xs text-muted-foreground">Description</th>
+                <th className="px-3 py-2 text-center text-xs text-muted-foreground">Qty</th>
+                <th className="px-3 py-2 text-right text-xs text-muted-foreground">Unit Price</th>
+                <th className="px-3 py-2 text-right text-xs text-muted-foreground">Total</th>
               </tr>
             </thead>
             <tbody>
               {invoice.items.map((item) => (
-                <tr key={item.id} className="border-b border-white/5 last:border-0">
-                  <td className="px-3 py-2.5 text-white">{item.description}</td>
-                  <td className="px-3 py-2.5 text-center text-[#9CA3AF]">{item.quantity}</td>
-                  <td className="px-3 py-2.5 text-right text-[#9CA3AF]">{formatCurrency(item.unitPrice)}</td>
-                  <td className="px-3 py-2.5 text-right font-medium text-white">{formatCurrency(item.total)}</td>
+                <tr key={item.id} className="border-b border-border/50 last:border-0">
+                  <td className="px-3 py-2.5 text-foreground">{item.description}</td>
+                  <td className="px-3 py-2.5 text-center text-muted-foreground">{item.quantity}</td>
+                  <td className="px-3 py-2.5 text-right text-muted-foreground">{formatCurrency(item.unitPrice)}</td>
+                  <td className="px-3 py-2.5 text-right font-medium text-foreground">{formatCurrency(item.total)}</td>
                 </tr>
               ))}
             </tbody>
@@ -189,18 +189,18 @@ export function InvoiceView({ invoice }: InvoiceViewProps) {
       </div>
 
       {/* Totals */}
-      <div className="ml-auto w-64 space-y-1.5 rounded-xl bg-white/5 p-4">
-        <div className="flex justify-between text-sm text-[#9CA3AF]">
+      <div className="ml-auto w-64 space-y-1.5 rounded-xl bg-muted/40 p-4">
+        <div className="flex justify-between text-sm text-muted-foreground">
           <span>Subtotal</span>
           <span>{formatCurrency(invoice.subtotal)}</span>
         </div>
         {invoice.tax > 0 && (
-          <div className="flex justify-between text-sm text-[#9CA3AF]">
+          <div className="flex justify-between text-sm text-muted-foreground">
             <span>Tax ({invoice.tax}%)</span>
             <span>{formatCurrency(taxAmount)}</span>
           </div>
         )}
-        <div className="flex justify-between border-t border-white/10 pt-2 font-semibold text-white">
+        <div className="flex justify-between border-t border-border pt-2 font-semibold text-foreground">
           <span>Total</span>
           <span>{formatCurrency(invoice.total)}</span>
         </div>
@@ -208,9 +208,9 @@ export function InvoiceView({ invoice }: InvoiceViewProps) {
 
       {/* Notes */}
       {invoice.notes && (
-        <div className="rounded-xl bg-white/5 px-4 py-3">
-          <p className="mb-1 text-xs font-medium text-[#9CA3AF]">Notes</p>
-          <p className="text-sm text-white">{invoice.notes}</p>
+        <div className="rounded-xl bg-muted/40 px-4 py-3">
+          <p className="mb-1 text-xs font-medium text-muted-foreground">Notes</p>
+          <p className="text-sm text-foreground">{invoice.notes}</p>
         </div>
       )}
     </div>

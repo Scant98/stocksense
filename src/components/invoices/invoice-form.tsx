@@ -116,29 +116,29 @@ export function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceFormProps) {
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-5">
       {/* Client Info */}
       <div>
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[#6366F1]">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-primary">
           Client Information
         </p>
         <div className="grid grid-cols-2 gap-3">
           <div className="col-span-2">
-            <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
               Client Name *
             </label>
             <Input {...register("clientName")} placeholder="e.g. Juma Enterprises" />
             {errors.clientName && (
-              <p className="mt-1 text-xs text-[#F43F5E]">{errors.clientName.message}</p>
+              <p className="mt-1 text-xs text-destructive">{errors.clientName.message}</p>
             )}
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Email</label>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Email</label>
             <Input {...register("clientEmail")} placeholder="client@example.com" />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Phone</label>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Phone</label>
             <Input {...register("clientPhone")} placeholder="+255 712 000 000" />
           </div>
           <div className="col-span-2">
-            <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Address</label>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Address</label>
             <Input {...register("clientAddress")} placeholder="Dar es Salaam, Tanzania" />
           </div>
         </div>
@@ -146,12 +146,12 @@ export function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceFormProps) {
 
       {/* Invoice Details */}
       <div>
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[#6366F1]">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-primary">
           Invoice Details
         </p>
         <div className="grid grid-cols-3 gap-3">
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Status</label>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Status</label>
             <Select
               defaultValue={invoice?.status ?? "draft"}
               onValueChange={(v) => setValue("status", v as FormData["status"])}
@@ -168,11 +168,11 @@ export function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceFormProps) {
             </Select>
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Due Date</label>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Due Date</label>
             <Input type="date" {...register("dueDate")} />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Tax (%)</label>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Tax (%)</label>
             <Input
               type="number"
               step="0.1"
@@ -181,7 +181,7 @@ export function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceFormProps) {
             />
           </div>
           <div className="col-span-3">
-            <label className="mb-1.5 block text-xs font-medium text-[#9CA3AF]">Notes</label>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Notes</label>
             <Input {...register("notes")} placeholder="Payment terms, bank details, etc." />
           </div>
         </div>
@@ -190,13 +190,13 @@ export function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceFormProps) {
       {/* Line Items */}
       <div>
         <div className="mb-3 flex items-center justify-between">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#6366F1]">
+          <p className="text-xs font-semibold uppercase tracking-wider text-primary">
             Line Items
           </p>
           <button
             type="button"
             onClick={() => append({ description: "", quantity: 1, unitPrice: 0 })}
-            className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-[#818CF8] hover:bg-[#6366F1]/10 transition-colors"
+            className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-primary hover:bg-primary/10 transition-colors"
           >
             <Plus className="h-3.5 w-3.5" />
             Add Item
@@ -204,15 +204,15 @@ export function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceFormProps) {
         </div>
 
         {errors.items && typeof errors.items.message === "string" && (
-          <p className="mb-2 text-xs text-[#F43F5E]">{errors.items.message}</p>
+          <p className="mb-2 text-xs text-destructive">{errors.items.message}</p>
         )}
 
         <div className="space-y-2">
           {/* Header */}
           <div className="grid grid-cols-12 gap-2 px-1">
-            <p className="col-span-6 text-xs text-[#6B7280]">Description</p>
-            <p className="col-span-2 text-xs text-[#6B7280]">Qty</p>
-            <p className="col-span-3 text-xs text-[#6B7280]">Unit Price</p>
+            <p className="col-span-6 text-xs text-muted-foreground">Description</p>
+            <p className="col-span-2 text-xs text-muted-foreground">Qty</p>
+            <p className="col-span-3 text-xs text-muted-foreground">Unit Price</p>
             <p className="col-span-1" />
           </div>
 
@@ -228,7 +228,7 @@ export function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceFormProps) {
                     placeholder="Product or service description"
                   />
                   {errors.items?.[index]?.description && (
-                    <p className="mt-0.5 text-xs text-[#F43F5E]">
+                    <p className="mt-0.5 text-xs text-destructive">
                       {errors.items[index]?.description?.message}
                     </p>
                   )}
@@ -253,14 +253,14 @@ export function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceFormProps) {
                   <button
                     type="button"
                     onClick={() => remove(index)}
-                    className="rounded-lg p-1.5 text-[#6B7280] hover:text-[#F43F5E] transition-colors"
+                    className="rounded-lg p-1.5 text-muted-foreground hover:text-destructive transition-colors"
                     disabled={fields.length === 1}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
                 </div>
                 {lineTotal > 0 && (
-                  <p className="col-span-12 -mt-1 pl-1 text-xs text-[#9CA3AF]">
+                  <p className="col-span-12 -mt-1 pl-1 text-xs text-muted-foreground">
                     = {formatCurrency(lineTotal)}
                   </p>
                 )}
@@ -271,16 +271,16 @@ export function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceFormProps) {
       </div>
 
       {/* Totals */}
-      <div className="rounded-xl bg-white/5 p-4 space-y-2">
-        <div className="flex justify-between text-sm text-[#9CA3AF]">
+      <div className="rounded-xl bg-muted/40 p-4 space-y-2">
+        <div className="flex justify-between text-sm text-muted-foreground">
           <span>Subtotal</span>
           <span>{formatCurrency(subtotal)}</span>
         </div>
-        <div className="flex justify-between text-sm text-[#9CA3AF]">
+        <div className="flex justify-between text-sm text-muted-foreground">
           <span>Tax ({watchedTax}%)</span>
           <span>{formatCurrency(taxAmount)}</span>
         </div>
-        <div className="flex justify-between border-t border-white/10 pt-2 text-base font-semibold text-white">
+        <div className="flex justify-between border-t border-border pt-2 text-base font-semibold text-foreground">
           <span>Total</span>
           <span>{formatCurrency(total)}</span>
         </div>

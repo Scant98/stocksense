@@ -17,7 +17,7 @@ export default function AlertsPage() {
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#6366F1] border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     );
   }
@@ -30,14 +30,14 @@ export default function AlertsPage() {
         {/* Out of Stock */}
         <BlurFade delay={0.1}>
           <div className="glass rounded-2xl overflow-hidden">
-            <div className="flex items-center gap-3 border-b border-white/8 px-5 py-4">
-              <XCircle className="h-5 w-5 text-[#F43F5E]" />
-              <h3 className="font-semibold text-white">Out of Stock</h3>
+            <div className="flex items-center gap-3 border-b border-border px-5 py-4">
+              <XCircle className="h-5 w-5 text-destructive" />
+              <h3 className="font-semibold text-foreground">Out of Stock</h3>
               <Badge variant="danger">{outOfStock.length}</Badge>
             </div>
             <div className="divide-y divide-white/5">
               {outOfStock.length === 0 ? (
-                <p className="px-5 py-8 text-center text-sm text-[#9CA3AF]">No items out of stock</p>
+                <p className="px-5 py-8 text-center text-sm text-muted-foreground">No items out of stock</p>
               ) : (
                 outOfStock.map((p, i) => (
                   <motion.div
@@ -48,15 +48,15 @@ export default function AlertsPage() {
                     className="flex items-center justify-between px-5 py-4"
                   >
                     <div>
-                      <p className="font-medium text-white">{p.name}</p>
-                      <p className="text-xs text-[#9CA3AF]">{p.category.name}</p>
+                      <p className="font-medium text-foreground">{p.name}</p>
+                      <p className="text-xs text-muted-foreground">{p.category.name}</p>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="text-right">
-                        <p className="text-xs text-[#9CA3AF]">Reorder point</p>
-                        <p className="font-semibold text-[#F43F5E]">{p.reorderPoint} units</p>
+                        <p className="text-xs text-muted-foreground">Reorder point</p>
+                        <p className="font-semibold text-destructive">{p.reorderPoint} units</p>
                       </div>
-                      <Button size="sm" variant="danger">Order Now</Button>
+                      <Button size="sm" variant="destructive">Order Now</Button>
                     </div>
                   </motion.div>
                 ))
@@ -68,16 +68,16 @@ export default function AlertsPage() {
         {/* Low Stock */}
         <BlurFade delay={0.2}>
           <div className="glass rounded-2xl overflow-hidden">
-            <div className="flex items-center gap-3 border-b border-white/8 px-5 py-4">
+            <div className="flex items-center gap-3 border-b border-border px-5 py-4">
               <motion.div animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                <AlertTriangle className="h-5 w-5 text-[#F59E0B]" />
+                <AlertTriangle className="h-5 w-5 text-warning" />
               </motion.div>
-              <h3 className="font-semibold text-white">Low Stock Warning</h3>
+              <h3 className="font-semibold text-foreground">Low Stock Warning</h3>
               <Badge variant="warning">{lowStock.length}</Badge>
             </div>
             <div className="divide-y divide-white/5">
               {lowStock.length === 0 ? (
-                <p className="px-5 py-8 text-center text-sm text-[#9CA3AF]">No low stock alerts</p>
+                <p className="px-5 py-8 text-center text-sm text-muted-foreground">No low stock alerts</p>
               ) : (
                 lowStock.map((p, i) => (
                   <motion.div
@@ -88,19 +88,19 @@ export default function AlertsPage() {
                     className="flex items-center justify-between px-5 py-4"
                   >
                     <div>
-                      <p className="font-medium text-white">{p.name}</p>
-                      <p className="text-xs text-[#9CA3AF]">{p.category.name}</p>
+                      <p className="font-medium text-foreground">{p.name}</p>
+                      <p className="text-xs text-muted-foreground">{p.category.name}</p>
                     </div>
                     <div className="flex items-center gap-6">
                       <div className="text-right">
-                        <p className="text-xs text-[#9CA3AF]">Current / Min</p>
-                        <p className="font-semibold text-[#F59E0B]">
+                        <p className="text-xs text-muted-foreground">Current / Min</p>
+                        <p className="font-semibold text-warning">
                           {p.quantity} / {p.reorderPoint}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-[#9CA3AF]">Last restocked</p>
-                        <div className="flex items-center gap-1 text-xs text-[#9CA3AF]">
+                        <p className="text-xs text-muted-foreground">Last restocked</p>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
                           <Clock className="h-3 w-3" />
                           {formatDate(p.lastRestocked)}
                         </div>

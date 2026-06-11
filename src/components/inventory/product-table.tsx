@@ -22,17 +22,17 @@ interface ProductTableProps {
 
 export function ProductTable({ products, onEdit, onDelete, onView }: ProductTableProps) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/8">
+    <div className="overflow-hidden rounded-2xl border border-border">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-white/8 bg-white/3">
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Product</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Category</th>
-              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Stock</th>
-              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Selling Price</th>
-              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Value</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Status</th>
+            <tr className="border-b border-border bg-muted/30">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Product</th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Category</th>
+              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">Stock</th>
+              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">Selling Price</th>
+              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">Value</th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Status</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -48,10 +48,10 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                     animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ delay: i * 0.04, duration: 0.3 }}
-                    className={`border-b border-white/5 hover:bg-white/3 transition-colors ${isLow ? "bg-[rgba(244,63,94,0.02)]" : ""}`}
+                    className={`border-b border-border/50 hover:bg-muted/30 transition-colors ${isLow ? "bg-destructive/5" : ""}`}
                   >
                     <td className="px-4 py-3">
-                      <p className="font-medium text-white">{product.name}</p>
+                      <p className="font-medium text-foreground">{product.name}</p>
                     </td>
                     <td className="px-4 py-3">
                       <span
@@ -70,20 +70,20 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                         transition={{ duration: 1.5, repeat: Infinity }}
                         className={`font-semibold ${
                           product.status === "out_of_stock"
-                            ? "text-[#F43F5E]"
+                            ? "text-destructive"
                             : product.status === "low_stock"
-                            ? "text-[#F59E0B]"
-                            : "text-white"
+                            ? "text-warning"
+                            : "text-foreground"
                         }`}
                       >
                         {product.quantity}
                       </motion.div>
-                      <p className="text-xs text-[#9CA3AF]">min {product.reorderPoint}</p>
+                      <p className="text-xs text-muted-foreground">min {product.reorderPoint}</p>
                     </td>
-                    <td className="px-4 py-3 text-right font-medium text-white">
+                    <td className="px-4 py-3 text-right font-medium text-foreground">
                       {formatCurrency(product.sellingPrice)}
                     </td>
-                    <td className="px-4 py-3 text-right font-medium text-white">
+                    <td className="px-4 py-3 text-right font-medium text-foreground">
                       {formatCurrency(product.quantity * product.sellingPrice)}
                     </td>
                     <td className="px-4 py-3">
@@ -98,7 +98,7 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                           <Edit2 className="h-3.5 w-3.5" />
                         </Button>
                         <Button variant="ghost" size="icon" onClick={() => onDelete(product.id)}
-                          className="text-[#9CA3AF] hover:text-[#F43F5E]">
+                          className="text-muted-foreground hover:text-destructive">
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </div>
@@ -110,7 +110,7 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
           </tbody>
         </table>
         {products.length === 0 && (
-          <div className="py-16 text-center text-[#9CA3AF]">
+          <div className="py-16 text-center text-muted-foreground">
             <Package className="mx-auto mb-3 h-10 w-10 opacity-30" />
             <p>No products found</p>
           </div>
