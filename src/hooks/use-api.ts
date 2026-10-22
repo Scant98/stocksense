@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Product, Category, Supplier, Transaction, Invoice } from "@/lib/types";
+import type { Product, Category, Supplier, Transaction, Invoice, Sale, PaymentMethod } from "@/lib/types";
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(path, options);
@@ -335,5 +335,49 @@ export function useDeleteInvoice() {
     mutationFn: (id: string) =>
       apiFetch(`/api/invoices/${id}`, { method: "DELETE" }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["invoices"] }),
+  });
+}
+
+/** Resolve a scanned code on the server. Resolves null when nothing matches. */
+export async function lookupProduct(code: string): Promise<Product | null> {
+  const res = await fetch(`/api/products/lookup?code=${encodeURIComponent(code)}`);
+  if (res.status === 404) return null;
+  if (res.status === 401 && typeof window !== "undefined") window.location.assign("/login");
+  if (!res.ok) throw new Error(`Lookup failed (${res.status})`);
+  return res.json();
+}
+
+export function useSales(enabled = true) {
+  return useQuery<Sale[]>({
+    queryKey: ["sales"],
+    queryFn: () => apiFetch("/api/sales?limit=30"),
+    enabled,
+    staleTime: 0,
+  });
+}
+
+export function useCreateSale() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: {
+      items: { productId: string; quantity: number; unitPrice?: number }[];
+      paymentMethod: PaymentMethod;
+      amountPaid?: number;
+      customerName?: string;
+    }) =>
+      apiFetch<Sale>("/api/sales", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }),
+    // On success *and* failure (e.g. out-of-stock) the stock numbers changed.
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ["products"] });
+      qc.invalidateQueries({ queryKey: ["sales"] });
+      qc.invalidateQueries({ queryKey: ["transactions"] });
+      qc.invalidateQueries({ queryKey: ["inventory-summary"] });
+      qc.invalidateQueries({ queryKey: ["dashboard"] });
+      qc.invalidateQueries({ queryKey: ["reports"] });
+    },
   });
 }

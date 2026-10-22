@@ -1,5 +1,6 @@
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/db";
+import { mapProduct, productInclude } from "@/lib/serializers";
 
 export async function GET() {
   const session = await getSession();
@@ -7,103 +8,98 @@ export async function GET() {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const [products, transactions, suppliers, categories] = await Promise.all([
-    prisma.product.findMany({
-      include: { category: true, supplier: true },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.transaction.findMany({
-      include: { product: { include: { category: true, supplier: true } } },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.supplier.findMany(),
-    prisma.category.findMany(),
-  ]);
-
-  const totalValue = products.reduce((s, p) => s + p.quantity * p.sellingPrice, 0);
-  const lowStockCount = products.filter((p) => p.status === "low_stock").length;
-  const outOfStockCount = products.filter((p) => p.status === "out_of_stock").length;
-  const totalSales = transactions
-    .filter((t) => t.type === "sale")
-    .reduce((s, t) => s + t.totalAmount, 0);
-  const activeSuppliers = suppliers.filter((s) => s.status === "active").length;
-  const totalOrders = transactions.filter((t) => t.type === "purchase").length;
-
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-  const todaySales = transactions.filter(
-    (t) => t.type === "sale" && new Date(t.createdAt) >= todayStart
-  );
-  const todaySalesAmount = todaySales.reduce((s, t) => s + t.totalAmount, 0);
-  const todaySalesCount = todaySales.length;
-
   const now = new Date();
-  const months = Array.from({ length: 6 }, (_, i) => {
-    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
-    return { year: d.getFullYear(), month: d.getMonth(), label: d.toLocaleString("default", { month: "short" }) };
-  });
+  const todayStart = new Date(now);
+  todayStart.setHours(0, 0, 0, 0);
+  const chartStart = new Date(now.getFullYear(), now.getMonth() - 5, 1);
 
-  const salesChartData = months.map(({ year, month, label }) => {
-    const start = new Date(year, month, 1);
-    const end = new Date(year, month + 1, 1);
-    const sales = transactions
-      .filter((t) => t.type === "sale" && new Date(t.createdAt) >= start && new Date(t.createdAt) < end)
-      .reduce((s, t) => s + t.totalAmount, 0);
-    const purchases = transactions
-      .filter((t) => t.type === "purchase" && new Date(t.createdAt) >= start && new Date(t.createdAt) < end)
-      .reduce((s, t) => s + t.totalAmount, 0);
-    return { month: label, sales, purchases };
-  });
-
-  const categoryStockData = categories.map((cat) => {
-    const catProducts = products.filter((p) => p.categoryId === cat.id);
-    return {
-      name: cat.name,
-      value: catProducts.reduce((s, p) => s + p.quantity, 0),
-      color: cat.color,
-    };
-  }).filter((c) => c.value > 0);
-
-  const recentTransactions = transactions.slice(0, 6).map((t) => ({
-    ...t,
-    product: {
-      ...t.product,
-      supplier: t.product.supplier ? {
-        ...t.product.supplier,
-        createdAt: t.product.supplier.createdAt.toISOString(),
-        updatedAt: t.product.supplier.updatedAt.toISOString(),
-      } : undefined,
-      lastRestocked: t.product.lastRestocked.toISOString(),
-      createdAt: t.product.createdAt.toISOString(),
-      updatedAt: t.product.updatedAt.toISOString(),
-    },
-    createdAt: t.createdAt.toISOString(),
-  }));
-
-  return Response.json({
-    totalProducts: products.length,
-    inventoryValue: totalValue,
+  // Everything below is aggregated in the database; nothing loads whole tables.
+  const [
+    totalProducts,
     lowStockCount,
     outOfStockCount,
-    totalSales,
+    inventoryValueRows,
+    salesTotal,
     activeSuppliers,
     totalOrders,
-    todaySalesAmount,
-    todaySalesCount,
-    categoriesCount: categories.length,
-    salesChartData,
+    todaySalesTotal,
+    todayReceipts,
+    todayLooseSales,
+    categoriesCount,
+    chartRows,
+    categoryStock,
+    categories,
+    recent,
+    alertProducts,
+  ] = await Promise.all([
+    prisma.product.count(),
+    prisma.product.count({ where: { status: "low_stock" } }),
+    prisma.product.count({ where: { status: "out_of_stock" } }),
+    prisma.$queryRaw<{ value: number }[]>`SELECT COALESCE(SUM("quantity" * "sellingPrice"), 0)::float8 AS value FROM "Product"`,
+    prisma.transaction.aggregate({ where: { type: "sale" }, _sum: { totalAmount: true } }),
+    prisma.supplier.count({ where: { status: "active" } }),
+    prisma.transaction.count({ where: { type: "purchase" } }),
+    prisma.transaction.aggregate({
+      where: { type: "sale", createdAt: { gte: todayStart } },
+      _sum: { totalAmount: true },
+    }),
+    prisma.sale.count({ where: { createdAt: { gte: todayStart } } }),
+    prisma.transaction.count({ where: { type: "sale", saleId: null, createdAt: { gte: todayStart } } }),
+    prisma.category.count(),
+    prisma.transaction.findMany({
+      where: { type: { in: ["sale", "purchase"] }, createdAt: { gte: chartStart } },
+      select: { type: true, totalAmount: true, createdAt: true },
+    }),
+    prisma.product.groupBy({ by: ["categoryId"], _sum: { quantity: true } }),
+    prisma.category.findMany({ select: { id: true, name: true, color: true } }),
+    prisma.transaction.findMany({
+      include: { product: { include: productInclude } },
+      orderBy: { createdAt: "desc" },
+      take: 6,
+    }),
+    prisma.product.findMany({
+      where: { status: { in: ["low_stock", "out_of_stock"] } },
+      include: productInclude,
+      orderBy: { quantity: "asc" },
+      take: 50,
+    }),
+  ]);
+
+  const months = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+    return { key: d.getFullYear() * 12 + d.getMonth(), label: d.toLocaleString("en", { month: "short" }), sales: 0, purchases: 0 };
+  });
+  const bucketByKey = new Map(months.map((m) => [m.key, m]));
+  for (const row of chartRows) {
+    const bucket = bucketByKey.get(row.createdAt.getFullYear() * 12 + row.createdAt.getMonth());
+    if (!bucket) continue;
+    if (row.type === "sale") bucket.sales += row.totalAmount;
+    else bucket.purchases += row.totalAmount;
+  }
+
+  const quantityByCategory = new Map(categoryStock.map((c) => [c.categoryId, c._sum.quantity ?? 0]));
+  const categoryStockData = categories
+    .map((c) => ({ name: c.name, value: quantityByCategory.get(c.id) ?? 0, color: c.color }))
+    .filter((c) => c.value > 0);
+
+  return Response.json({
+    totalProducts,
+    inventoryValue: inventoryValueRows[0]?.value ?? 0,
+    lowStockCount,
+    outOfStockCount,
+    totalSales: salesTotal._sum.totalAmount ?? 0,
+    activeSuppliers,
+    totalOrders,
+    todaySalesAmount: todaySalesTotal._sum.totalAmount ?? 0,
+    todaySalesCount: todayReceipts + todayLooseSales,
+    categoriesCount,
+    salesChartData: months.map(({ label, sales, purchases }) => ({ month: label, sales, purchases })),
     categoryStockData,
-    recentTransactions,
-    products: products.map((p) => ({
-      ...p,
-      supplier: p.supplier ? {
-        ...p.supplier,
-        createdAt: p.supplier.createdAt.toISOString(),
-        updatedAt: p.supplier.updatedAt.toISOString(),
-      } : undefined,
-      lastRestocked: p.lastRestocked.toISOString(),
-      createdAt: p.createdAt.toISOString(),
-      updatedAt: p.updatedAt.toISOString(),
+    recentTransactions: recent.map((t) => ({
+      ...t,
+      product: mapProduct(t.product),
+      createdAt: t.createdAt.toISOString(),
     })),
+    products: alertProducts.map(mapProduct),
   });
 }

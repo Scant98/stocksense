@@ -2,104 +2,27 @@
   "name": "stocksense",
   "version": "0.2.0",
   "private": true,
-  "description": "Desktop inventory, supplier, invoice, and stock management for small businesses.",
+  "description": "Inventory, point-of-sale, supplier and invoice management for small shops.",
   "author": "StockSense",
-  "main": "electron/main.cjs",
   "scripts": {
-    "setup": "tsx scripts/setup.ts",
     "dev": "next dev",
-    "build": "next build",
-    "build:webpack": "next build --webpack",
+    "build": "prisma generate && next build",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio",
-    "backup": "tsx scripts/backup.ts",
-    "restore": "tsx scripts/restore.ts",
-    "assets:icons": "node scripts/generate-icons.mjs",
-    "postinstall": "prisma generate && electron-builder install-app-deps",
-    "electron": "electron .",
-    "electron:dev": "concurrently -k -n NEXT,ELECTRON -c blue,magenta \"next dev\" \"wait-on http://localhost:3000 && electron .\"",
-    "electron:clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true});require('fs').rmSync('dist-electron',{recursive:true,force:true})\"",
-    "electron:rebuild": "electron-rebuild -f -w better-sqlite3",
-    "electron:build": "npm run electron:clean && npm run build:webpack && npm run electron:rebuild && electron-builder",
-    "electron:pack": "npm run electron:clean && npm run build:webpack && npm run electron:rebuild && electron-builder --dir"
-  },
-  "build": {
-    "appId": "co.tz.stocksense.app",
-    "productName": "StockSense",
-    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
-    "asar": true,
-    "npmRebuild": true,
-    "directories": {
-      "output": "dist-electron"
-    },
-    "icon": "build/icon.png",
-    "extraResources": [
-      {
-        "from": "prisma/dev.db",
-        "to": "bootstrap/dev.db"
-      },
-      {
-        "from": "node_modules/.prisma",
-        "to": "node_modules/.prisma"
-      },
-      {
-        "from": "prisma/migrations",
-        "to": "bootstrap/migrations"
-      }
-    ],
-    "asarUnpack": [
-      "node_modules/.prisma/**/*",
-      "node_modules/better-sqlite3/**/*"
-    ],
-    "files": [
-      "electron/**/*",
-      ".next/**/*",
-      "public/**/*",
-      "package.json",
-      "next.config.*",
-      "node_modules/**/*"
-    ],
-    "win": {
-      "icon": "build/icon.ico",
-      "target": [
-        "nsis"
-      ]
-    },
-    "mac": {
-      "icon": "build/icon.png",
-      "target": [
-        "dmg"
-      ],
-      "category": "public.app-category.business"
-    },
-    "linux": {
-      "icon": "build/icon.png",
-      "target": [
-        "AppImage"
-      ],
-      "category": "Office"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "deleteAppDataOnUninstall": false,
-      "installerLanguages": [
-        "en_US"
-      ],
-      "shortcutName": "StockSense"
-    }
+    "db:studio": "prisma studio"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
-    "@prisma/adapter-better-sqlite3": "^7.8.0",
-    "@prisma/client": "^7.8.0",
+    "@prisma/adapter-pg": "^7.10.1",
+    "@prisma/client": "^7.10.1",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-checkbox": "^1.3.3",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -119,22 +42,26 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tanstack/react-query": "^5.100.1",
     "@tanstack/react-table": "^8.21.3",
+    "@zxing/browser": "^0.2.1",
+    "@zxing/library": "^0.23.0",
     "bcryptjs": "^3.0.3",
-    "better-sqlite3": "^12.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^18.0.8",
     "framer-motion": "^12.38.0",
     "jose": "^6.2.2",
+    "jsbarcode": "^3.12.3",
     "lucide-react": "^1.17.0",
     "next": "16.2.4",
     "next-themes": "^0.4.6",
-    "prisma": "^7.8.0",
+    "pg": "^8.23.1",
+    "prisma": "^7.10.1",
+    "qrcode": "^1.5.4",
     "radix-ui": "^1.5.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.73.1",
     "recharts": "^3.8.0",
-    "shadcn": "^4.11.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.6.0",
     "tailwindcss-animate": "^1.0.7",
@@ -144,22 +71,17 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
-    "@electron/fuses": "^2.1.1",
-    "@electron/rebuild": "^4.0.4",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
-    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
+    "@types/pg": "^8.23.1",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "concurrently": "^9.1.0",
-    "electron": "^33.2.0",
-    "electron-builder": "^25.1.8",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
-    "typescript": "^5",
-    "wait-on": "^8.0.1"
+    "typescript": "^5"
   }
 }

@@ -1,30 +1,12 @@
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/db";
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { getProductStatus } from "@/lib/inventory";
 import { productPayloadSchema } from "@/lib/validators";
+import { mapProduct, productInclude } from "@/lib/serializers";
 import { ZodError } from "zod";
 
-const include = {
-  category: true,
-  supplier: true,
-} as const;
-
-type ProductWithRelations = Prisma.ProductGetPayload<{ include: typeof include }>;
-
-function mapProduct(p: ProductWithRelations) {
-  return {
-    ...p,
-    supplier: p.supplier ? {
-      ...p.supplier,
-      createdAt: p.supplier.createdAt.toISOString(),
-      updatedAt: p.supplier.updatedAt.toISOString(),
-    } : null,
-    lastRestocked: p.lastRestocked?.toISOString(),
-    createdAt: p.createdAt.toISOString(),
-    updatedAt: p.updatedAt.toISOString(),
-  };
-}
+const include = productInclude;
 
 export async function PUT(
   request: Request,
@@ -44,6 +26,7 @@ export async function PUT(
       data: {
         name: body.name,
         sku: body.sku ?? null,
+        barcode: body.barcode ?? null,
         category: { connect: { id: body.categoryId } },
         supplier: body.supplierId ? { connect: { id: body.supplierId } } : { disconnect: true },
         quantity: body.quantity,
@@ -60,10 +43,13 @@ export async function PUT(
 
     return Response.json(mapProduct(product));
   } catch (error) {
-    console.error(error);
     if (error instanceof ZodError) {
       return Response.json({ error: "Invalid product payload", detail: error.issues[0]?.message }, { status: 400 });
     }
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      return Response.json({ error: "Barcode already used", detail: "Another product already has this barcode." }, { status: 409 });
+    }
+    console.error(error);
     return Response.json({ error: "Failed to update product" }, { status: 500 });
   }
 }

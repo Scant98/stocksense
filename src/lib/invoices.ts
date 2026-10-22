@@ -9,12 +9,8 @@ export function computeInvoiceTotals(
   return { subtotal, total };
 }
 
-export async function getNextInvoiceNumber(
-  tx: Prisma.TransactionClient,
-  now: Date = new Date()
-) {
-  const key = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}`;
-
+/** Atomically bump a named counter and return the new value. */
+async function nextSequenceValue(tx: Prisma.TransactionClient, key: string) {
   await tx.invoiceSequence.upsert({
     where: { key },
     create: { key, value: 0 },
@@ -26,5 +22,27 @@ export async function getNextInvoiceNumber(
     data: { value: { increment: 1 } },
   });
 
-  return `INV-${key}-${String(sequence.value).padStart(4, "0")}`;
+  return sequence.value;
+}
+
+function monthKey(now: Date) {
+  return `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
+export async function getNextInvoiceNumber(
+  tx: Prisma.TransactionClient,
+  now: Date = new Date()
+) {
+  const key = monthKey(now);
+  const value = await nextSequenceValue(tx, key);
+  return `INV-${key}-${String(value).padStart(4, "0")}`;
+}
+
+export async function getNextReceiptNumber(
+  tx: Prisma.TransactionClient,
+  now: Date = new Date()
+) {
+  const key = monthKey(now);
+  const value = await nextSequenceValue(tx, `RCT-${key}`);
+  return `RCT-${key}-${String(value).padStart(5, "0")}`;
 }

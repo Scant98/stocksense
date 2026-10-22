@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { normalizeCode } from "@/lib/barcode";
 
 export const productStatusSchema = z.enum(["in_stock", "low_stock", "warning", "out_of_stock"]);
 export const invoiceStatusSchema = z.enum(["draft", "sent", "paid", "overdue"]);
@@ -20,6 +21,11 @@ const optionalEmail = z.preprocess((value) => {
 export const productPayloadSchema = z.object({
   name: z.string().trim().min(2, "Product name is required"),
   sku: optionalTrimmedString,
+  barcode: z.preprocess((value) => {
+    if (typeof value !== "string") return value;
+    const code = normalizeCode(value);
+    return code === "" ? undefined : code;
+  }, z.string().max(64, "Barcode is too long").optional()),
   categoryId: z.string().trim().min(1, "Category is required"),
   supplierId: optionalTrimmedString,
   quantity: z.coerce.number().int().min(0, "Quantity must be 0 or more"),
@@ -70,4 +76,23 @@ export const transactionPayloadSchema = z.object({
 
 export const wipePayloadSchema = z.object({
   scope: z.array(wipeScopeSchema).min(1).default(["all"]),
+});
+
+export const paymentMethodSchema = z.enum(["cash", "mobile_money", "card"]);
+
+export const salePayloadSchema = z.object({
+  items: z
+    .array(
+      z.object({
+        productId: z.string().trim().min(1, "Product is required"),
+        quantity: z.coerce.number().int().min(1, "Quantity must be at least 1").max(100000),
+        // Optional manual price override at the till; defaults to the product's selling price.
+        unitPrice: z.coerce.number().min(0, "Price must be 0 or more").optional(),
+      })
+    )
+    .min(1, "The cart is empty")
+    .max(200, "Too many lines in one sale"),
+  paymentMethod: paymentMethodSchema.default("cash"),
+  amountPaid: z.coerce.number().min(0).optional(),
+  customerName: z.string().trim().max(120).optional().default(""),
 });

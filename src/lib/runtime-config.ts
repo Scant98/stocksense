@@ -1,5 +1,10 @@
-export const DEFAULT_SESSION_SECRET = "stocksense-local-session-secret";
+const DEV_SESSION_SECRET = "stocksense-local-session-secret";
 
 export function getSessionSecret() {
-  return process.env.SESSION_SECRET || DEFAULT_SESSION_SECRET;
+  const secret = process.env.SESSION_SECRET;
+  if (secret) return secret;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("SESSION_SECRET must be set in production.");
+  }
+  return DEV_SESSION_SECRET;
 }

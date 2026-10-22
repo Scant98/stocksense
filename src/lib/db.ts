@@ -1,10 +1,15 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 function createPrismaClient() {
-  const dbPath = process.env.LIBSQL_EMBEDDED_URL?.replace("file:", "") || "prisma/dev.db";
-  const adapter = new PrismaBetterSqlite3({ url: dbPath });
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error("DATABASE_URL is not set. Add your Postgres connection string to the environment.");
+  }
 
+  // Serverless-friendly: one small pool per function instance. Use the pooled
+  // (pgbouncer) connection string from your provider for DATABASE_URL.
+  const adapter = new PrismaPg({ connectionString, max: 3 });
   return new PrismaClient({ adapter });
 }
 

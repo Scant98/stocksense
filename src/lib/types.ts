@@ -24,7 +24,8 @@ export interface Supplier {
 export interface Product {
   id: string;
   name: string;
-  sku?: string;
+  sku?: string | null;
+  barcode?: string | null;
   categoryId: string;
   category: Category;
   supplierId?: string;
@@ -53,6 +54,32 @@ export interface Transaction {
   reference: string;
   notes?: string;
   createdAt: string;
+}
+
+export type PaymentMethod = "cash" | "mobile_money" | "card";
+
+export interface SaleLine {
+  id: string;
+  productId: string;
+  name: string;
+  barcode?: string | null;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+}
+
+export interface Sale {
+  id: string;
+  receiptNumber: string;
+  paymentMethod: PaymentMethod;
+  subtotal: number;
+  total: number;
+  amountPaid: number;
+  change: number;
+  customerName: string;
+  cashierName: string;
+  createdAt: string;
+  items: SaleLine[];
 }
 
 export type InvoiceStatus = "draft" | "sent" | "paid" | "overdue";

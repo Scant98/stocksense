@@ -11,6 +11,8 @@ import {
   LayoutDashboard,
   LogOut,
   Package,
+  QrCode,
+  ScanBarcode,
   Settings,
   ShoppingCart,
   Tag,
@@ -43,6 +45,13 @@ import { useInventorySummary, useUser } from "@/hooks/use-api";
 import { logout } from "@/app/actions/auth";
 
 const navGroups = [
+  {
+    label: "Sell",
+    items: [
+      { href: "/pos", label: "Point of Sale", icon: ScanBarcode },
+      { href: "/labels", label: "Barcode Labels", icon: QrCode },
+    ],
+  },
   {
     label: "Overview",
     items: [

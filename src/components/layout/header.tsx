@@ -4,7 +4,6 @@ import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { SyncIndicator } from "@/components/layout/sync-indicator";
 import { useInventorySummary } from "@/hooks/use-api";
 
 interface HeaderProps {
@@ -28,7 +27,6 @@ export function Header({ title, subtitle, action }: HeaderProps) {
 
       <div className="ml-auto flex items-center gap-2">
         {action}
-        <SyncIndicator />
         <Button asChild variant="outline" size="icon" className="relative size-8">
           <Link href="/alerts" title="View alerts">
             <Bell className="size-4" />

@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { ean13CheckDigit } from "../src/lib/barcode";
 import bcrypt from "bcryptjs";
 import { config } from "dotenv";
 import path from "path";
@@ -7,25 +8,31 @@ import path from "path";
 config({ path: path.resolve(process.cwd(), ".env"), override: true });
 
 async function main() {
-  const dbPath = process.env.LIBSQL_EMBEDDED_URL?.replace("file:", "") || "prisma/dev.db";
-  const adapter = new PrismaBetterSqlite3({ url: dbPath });
-  const prisma = new PrismaClient({ adapter });
+  const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL;
+  if (!connectionString) throw new Error("DATABASE_URL is not set");
+  const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString }) });
 
   console.log("Cleaning existing data...");
+  await prisma.sale.deleteMany();
   await prisma.transaction.deleteMany();
+  await prisma.invoiceItem.deleteMany();
+  await prisma.invoice.deleteMany();
+  await prisma.invoiceSequence.deleteMany();
   await prisma.product.deleteMany();
   await prisma.supplier.deleteMany();
   await prisma.category.deleteMany();
   console.log("Done. Seeding electrical tools shop...");
 
   // Admin user
-  const hashedPassword = await bcrypt.hash("Admin123!", 10);
+  const adminEmail = process.env.SEED_ADMIN_EMAIL || "danieldenho9@gmail.com";
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD || "Admin123!";
+  const hashedPassword = await bcrypt.hash(adminPassword, 10);
   const user = await prisma.user.upsert({
-    where: { email: "danieldenho9@gmail.com" },
-    update: {},
+    where: { email: adminEmail },
+    update: { password: hashedPassword },
     create: {
       name: "Daniel K.",
-      email: "danieldenho9@gmail.com",
+      email: adminEmail,
       password: hashedPassword,
       role: "admin",
     },
@@ -89,9 +96,12 @@ async function main() {
   type SeededProduct = Awaited<ReturnType<typeof prisma.product.create>>;
   const products: SeededProduct[] = [];
   for (const p of productData) {
+    // Stable in-store EAN-13 per product so the demo labels/scans are reproducible.
+    const body = "200" + String(products.length + 1).padStart(9, "0");
     const product = await prisma.product.create({
       data: {
         ...p,
+        barcode: body + ean13CheckDigit(body),
         lastRestocked: new Date(now.getTime() - Math.random() * 60 * 24 * 60 * 60 * 1000),
       },
     });
@@ -141,8 +151,12 @@ async function main() {
   console.log(`Transactions: ${txData.length}`);
 
   console.log("\nSeed complete!");
-  console.log("  Email:    danieldenho9@gmail.com");
-  console.log("  Password: Admin123!");
+  console.log(`  Email:    ${adminEmail}`);
+  console.log(`  Password: ${adminPassword}`);
+  await prisma.$disconnect();
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

@@ -35,22 +35,12 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
 
-# electron
-/dist-electron
-/electron/icon.png
-
-# libsql embedded replica
-local.db
-local.db-*
-*.db-info
-*.db-shm
-*.db-wal
-*.db-client_wal_index
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.playwright-mcp/

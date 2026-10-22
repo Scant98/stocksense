@@ -31,6 +31,7 @@ export async function POST(req: Request) {
         await tx.invoice.deleteMany();
       }
       if (scope.includes("transactions")) {
+        await tx.sale.deleteMany();
         await tx.transaction.deleteMany();
       }
       if (scope.includes("products")) {

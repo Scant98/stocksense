@@ -1,15 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
-import { getSessionSecret } from "./src/lib/runtime-config";
+import { getSessionSecret } from "@/lib/runtime-config";
 
-const secretKey = getSessionSecret();
-const encodedKey = new TextEncoder().encode(secretKey);
+const getKey = () => new TextEncoder().encode(getSessionSecret());
 
 async function decryptToken(token: string | undefined) {
   if (!token) return null;
   try {
-    const { payload } = await jwtVerify(token, encodedKey, {
+    const { payload } = await jwtVerify(token, getKey(), {
       algorithms: ["HS256"],
     });
     return payload as { userId: string };
@@ -37,5 +36,5 @@ export default async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$|.*\\.ico$|.*\\.svg$).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|manifest\\.webmanifest|.*\\.(?:png|jpg|jpeg|webp|ico|svg)$).*)"],
 };

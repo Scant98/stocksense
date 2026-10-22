@@ -1,6 +1,6 @@
 "use client";
-import { motion, AnimatePresence } from "framer-motion";
-import { Edit2, Trash2, Eye } from "lucide-react";
+import Link from "next/link";
+import { Edit2, Trash2, Eye, QrCode } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
@@ -37,21 +37,19 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
             </tr>
           </thead>
           <tbody>
-            <AnimatePresence mode="popLayout">
-              {products.map((product, i) => {
+            {products.map((product) => {
                 const status = statusConfig[product.status];
                 const isLow = product.status === "low_stock" || product.status === "out_of_stock";
                 return (
-                  <motion.tr
+                  <tr
                     key={product.id}
-                    initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ delay: i * 0.04, duration: 0.3 }}
                     className={`border-b border-border/50 hover:bg-muted/30 transition-colors ${isLow ? "bg-destructive/5" : ""}`}
                   >
                     <td className="px-4 py-3">
                       <p className="font-medium text-foreground">{product.name}</p>
+                      {(product.barcode || product.sku) && (
+                        <p className="font-mono text-xs text-muted-foreground">{product.barcode || product.sku}</p>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <span
@@ -65,9 +63,7 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <motion.div
-                        animate={isLow ? { opacity: [1, 0.5, 1] } : {}}
-                        transition={{ duration: 1.5, repeat: Infinity }}
+                      <div
                         className={`font-semibold ${
                           product.status === "out_of_stock"
                             ? "text-destructive"
@@ -77,7 +73,7 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                         }`}
                       >
                         {product.quantity}
-                      </motion.div>
+                      </div>
                       <p className="text-xs text-muted-foreground">min {product.reorderPoint}</p>
                     </td>
                     <td className="px-4 py-3 text-right font-medium text-foreground">
@@ -94,6 +90,11 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                         <Button variant="ghost" size="icon" onClick={() => onView(product)}>
                           <Eye className="h-3.5 w-3.5" />
                         </Button>
+                        <Button asChild variant="ghost" size="icon" title="Print label">
+                          <Link href={`/labels?ids=${product.id}`}>
+                            <QrCode className="h-3.5 w-3.5" />
+                          </Link>
+                        </Button>
                         <Button variant="ghost" size="icon" onClick={() => onEdit(product)}>
                           <Edit2 className="h-3.5 w-3.5" />
                         </Button>
@@ -103,10 +104,9 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                         </Button>
                       </div>
                     </td>
-                  </motion.tr>
+                  </tr>
                 );
               })}
-            </AnimatePresence>
           </tbody>
         </table>
         {products.length === 0 && (

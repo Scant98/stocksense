@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model User {
@@ -44,6 +44,7 @@ model Product {
   id            String        @id @default(cuid())
   name          String
   sku           String?
+  barcode       String?       @unique
   categoryId    String
   category      Category      @relation(fields: [categoryId], references: [id])
   supplierId    String?
@@ -59,6 +60,11 @@ model Product {
   transactions  Transaction[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+
+  @@index([categoryId])
+  @@index([supplierId])
+  @@index([status])
+  @@index([sku])
 }
 
 model Transaction {
@@ -71,7 +77,31 @@ model Transaction {
   totalAmount Float
   reference   String   @unique
   notes       String   @default("")
+  saleId      String?
+  sale        Sale?    @relation(fields: [saleId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
+
+  @@index([productId])
+  @@index([saleId])
+  @@index([type, createdAt])
+}
+
+// One checkout at the till. Each scanned line becomes a "sale" Transaction.
+model Sale {
+  id            String        @id @default(cuid())
+  receiptNumber String        @unique
+  paymentMethod String        @default("cash")
+  subtotal      Float
+  total         Float
+  amountPaid    Float
+  change        Float         @default(0)
+  customerName  String        @default("")
+  cashierId     String?
+  cashierName   String        @default("")
+  items         Transaction[]
+  createdAt     DateTime      @default(now())
+
+  @@index([createdAt])
 }
 
 model Invoice {

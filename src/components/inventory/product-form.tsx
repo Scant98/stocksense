@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Plus } from "lucide-react";
+import { Plus, ScanBarcode, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -14,13 +14,18 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { ScanDialog } from "@/components/scanner/scan-dialog";
 import { useAddCategory } from "@/hooks/use-api";
+import { generateEan13, normalizeCode } from "@/lib/barcode";
 import type { Product, Category } from "@/lib/types";
 import { getStockStatus } from "@/lib/utils";
 import { toast } from "sonner";
 
 const schema = z.object({
   name: z.string().min(2, "Name is required"),
+  barcode: z.string().optional(),
+  sku: z.string().optional(),
+  location: z.string().optional(),
   categoryId: z.string().min(1, "Category is required"),
   quantity: z.number().min(0, "Quantity must be 0 or more"),
   reorderPoint: z.number().min(1, "Reorder point required"),
@@ -38,6 +43,8 @@ const CATEGORY_COLORS = [
 
 interface ProductFormProps {
   product?: Product;
+  /** Pre-fill the barcode when creating a product from an unknown scan. */
+  initialBarcode?: string;
   categories: Category[];
   onSubmit: (data: Partial<Product>) => void;
   onCancel: () => void;
@@ -45,6 +52,7 @@ interface ProductFormProps {
 
 export function ProductForm({
   product,
+  initialBarcode,
   categories = [],
   onSubmit,
   onCancel,
@@ -52,6 +60,7 @@ export function ProductForm({
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [categoryName, setCategoryName] = useState("");
   const [categoryColor, setCategoryColor] = useState(CATEGORY_COLORS[0]);
+  const [scanOpen, setScanOpen] = useState(false);
   const [createdCategories, setCreatedCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState(product?.categoryId ?? "");
   const addCategory = useAddCategory();
@@ -61,6 +70,9 @@ export function ProductForm({
     defaultValues: product
       ? {
           name: product.name,
+          barcode: product.barcode ?? "",
+          sku: product.sku ?? "",
+          location: product.location ?? "",
           categoryId: product.categoryId,
           quantity: product.quantity,
           reorderPoint: product.reorderPoint,
@@ -68,7 +80,7 @@ export function ProductForm({
           sellingPrice: product.sellingPrice,
           description: product.description,
         }
-      : { quantity: 0, reorderPoint: 10 },
+      : { quantity: 0, reorderPoint: 10, barcode: initialBarcode ?? "" },
   });
 
   const selectableCategories = useMemo(() => {
@@ -82,6 +94,9 @@ export function ProductForm({
   const onFormSubmit = (data: FormData) => {
     const submitData: Partial<Product> = {
       name: data.name,
+      barcode: data.barcode?.trim() || undefined,
+      sku: data.sku?.trim() || undefined,
+      location: data.location?.trim() || "",
       quantity: data.quantity,
       reorderPoint: data.reorderPoint,
       unitPrice: data.unitPrice,
@@ -127,6 +142,42 @@ export function ProductForm({
           <Input {...register("name")} placeholder="e.g. Samsung Galaxy A54" />
           {errors.name && <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>}
         </div>
+        <div className="col-span-2">
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+            Barcode / QR code {!product && <span className="font-normal">(leave empty to generate one)</span>}
+          </label>
+          <div className="flex gap-2">
+            <Input
+              {...register("barcode")}
+              placeholder="Scan or type the code on the product"
+              autoComplete="off"
+              inputMode="text"
+              // Scanner guns finish with Enter; don't let that submit the form.
+              onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
+            />
+            <Button type="button" variant="outline" onClick={() => setScanOpen(true)}>
+              <ScanBarcode className="h-4 w-4" />
+              Scan
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setValue("barcode", generateEan13(), { shouldDirty: true })}
+              title="Generate an in-store barcode"
+            >
+              <Wand2 className="h-4 w-4" />
+              <span className="hidden sm:inline">Generate</span>
+            </Button>
+          </div>
+        </div>
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">SKU (optional)</label>
+          <Input {...register("sku")} placeholder="e.g. PT-BSH-001" />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Shelf / Location (optional)</label>
+          <Input {...register("location")} placeholder="e.g. Aisle 3, Shelf B" />
+        </div>
         <div>
           <div className="mb-1.5 flex items-center justify-between gap-2">
             <label className="block text-xs font-medium text-muted-foreground">Category</label>
@@ -146,7 +197,7 @@ export function ProductForm({
               setValue("categoryId", v, { shouldValidate: true });
             }}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
@@ -187,6 +238,13 @@ export function ProductForm({
         <Button type="submit">{product ? "Update Product" : "Add Product"}</Button>
       </div>
     </form>
+
+    <ScanDialog
+      open={scanOpen}
+      onOpenChange={setScanOpen}
+      title="Scan the product barcode"
+      onScan={(code) => setValue("barcode", normalizeCode(code), { shouldDirty: true })}
+    />
 
     <Dialog open={categoryOpen} onOpenChange={setCategoryOpen}>
       <DialogContent className="max-w-sm">

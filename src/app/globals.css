@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import "./shadcn-variants.css";
 
 @custom-variant dark (&:is([data-theme="dark"] *));
 
@@ -237,4 +237,24 @@
 
 .animate-meteor {
   animation: meteor 5s linear infinite;
+}
+
+/* Printing: only #print-area (receipts, barcode labels) is shown. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-area,
+  #print-area * {
+    visibility: visible;
+  }
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  @page {
+    margin: 6mm;
+  }
 }

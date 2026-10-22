@@ -143,8 +143,8 @@ export async function GET(request: Request) {
   const transactions = await prisma.transaction.findMany({
     where:
       period === "all"
-        ? undefined
-        : { createdAt: { gte: start, lte: end } },
+        ? { type: "sale" }
+        : { type: "sale", createdAt: { gte: start, lte: end } },
     include: { product: { include: { category: true } } },
     orderBy: { createdAt: "asc" },
   });

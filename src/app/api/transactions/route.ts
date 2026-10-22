@@ -40,6 +40,7 @@ export async function GET() {
   const transactions = await prisma.transaction.findMany({
     include,
     orderBy: { createdAt: "desc" },
+    take: 1000,
   });
 
   return Response.json(transactions.map(mapTransaction));
