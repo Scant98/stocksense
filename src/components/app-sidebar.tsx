@@ -146,6 +146,8 @@ function SidebarUser() {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
+  const { setOpenMobile } = useSidebar();
+  const closeMobileMenu = () => setOpenMobile(false);
   const { data: summary } = useInventorySummary();
   const alertCount = summary?.alertCount ?? 0;
 
@@ -155,7 +157,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
-              <Link href="/dashboard">
+              <Link href="/dashboard" onClick={closeMobileMenu}>
                 <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
                   <Package className="size-4" />
                 </div>
@@ -178,7 +180,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   return (
                     <SidebarMenuItem key={item.href}>
                       <SidebarMenuButton asChild tooltip={item.label} isActive={isActive}>
-                        <Link href={item.href}>
+                        <Link href={item.href} onClick={closeMobileMenu}>
                           <item.icon />
                           <span>{item.label}</span>
                         </Link>
@@ -204,7 +206,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   tooltip="Settings"
                   isActive={pathname.startsWith("/settings")}
                 >
-                  <Link href="/settings">
+                  <Link href="/settings" onClick={closeMobileMenu}>
                     <Settings />
                     <span>Settings</span>
                   </Link>

@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { AlertTriangle, XCircle, Clock } from "lucide-react";
+import { PageSpinner } from "@/components/layout/page-spinner";
 import { Header } from "@/components/layout/header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,9 +17,7 @@ export default function AlertsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-      </div>
+      <PageSpinner />
     );
   }
 

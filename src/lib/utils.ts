@@ -14,6 +14,14 @@ export function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
+/** "TSh 63.3M": short form for narrow cards on phones. */
+export function formatCompactCurrency(amount: number): string {
+  return (
+    "TSh " +
+    new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(amount)
+  );
+}
+
 export function formatNumber(n: number): string {
   return new Intl.NumberFormat("en").format(n);
 }

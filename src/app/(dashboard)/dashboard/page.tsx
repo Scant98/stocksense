@@ -13,7 +13,9 @@ import { CategoryChart } from "@/components/dashboard/category-chart";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { LowStockAlert } from "@/components/dashboard/low-stock-alert";
 import { BlurFade } from "@/components/magic/blur-fade";
-import { formatCurrency } from "@/lib/utils";
+import { PageSpinner } from "@/components/layout/page-spinner";
+import { Header } from "@/components/layout/header";
+import { formatCompactCurrency, formatCurrency } from "@/lib/utils";
 import { useDashboard, useUser } from "@/hooks/use-api";
 import { QueryErrorState } from "@/components/layout/query-error-state";
 
@@ -33,9 +35,7 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-      </div>
+      <PageSpinner />
     );
   }
 
@@ -45,8 +45,10 @@ export default function DashboardPage() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: "easeOut" }}>
+      <Header title="Dashboard" subtitle="Overview of your shop" />
+
       {/* Hero Banner */}
-      <div className="relative overflow-hidden border-b bg-gradient-to-br from-primary/10 via-background to-background px-6 py-8">
+      <div className="relative overflow-hidden border-b bg-gradient-to-br from-primary/10 via-background to-background px-4 py-6 sm:px-6 sm:py-8">
         <div className="relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -66,14 +68,14 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="p-6 space-y-6">
+      <div className="space-y-4 p-4 sm:space-y-6 sm:p-6">
         {/* Low Stock Alert */}
         <BlurFade delay={0.1}>
           <LowStockAlert products={data.products} />
         </BlurFade>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
           <StatCard
             title="Total Products"
             value={data.totalProducts}
@@ -86,6 +88,7 @@ export default function DashboardPage() {
             title="Inventory Value"
             value={data.inventoryValue}
             formatter={formatCurrency}
+            compactFormatter={formatCompactCurrency}
             icon={DollarSign}
             change={12}
             accent="success"
@@ -104,6 +107,7 @@ export default function DashboardPage() {
             title="Total Sales"
             value={data.totalSales}
             formatter={formatCurrency}
+            compactFormatter={formatCompactCurrency}
             icon={TrendingUp}
             change={18}
             accent="primary"
@@ -112,11 +116,12 @@ export default function DashboardPage() {
         </div>
 
         {/* Secondary Stats */}
-        <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
           <StatCard
             title="Today's Revenue"
             value={data.todaySalesAmount}
             formatter={formatCurrency}
+            compactFormatter={formatCompactCurrency}
             icon={TrendingUp}
             accent="success"
             delay={0.35}

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Plus, Search, FileText } from "lucide-react";
+import { PageSpinner } from "@/components/layout/page-spinner";
 import { Header } from "@/components/layout/header";
 import { InvoiceTable } from "@/components/invoices/invoice-table";
 import { InvoiceForm } from "@/components/invoices/invoice-form";
@@ -99,9 +100,7 @@ export default function InvoicesPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-      </div>
+      <PageSpinner />
     );
   }
 

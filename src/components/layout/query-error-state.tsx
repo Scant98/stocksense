@@ -2,6 +2,7 @@
 
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Header } from "@/components/layout/header";
 
 interface QueryErrorStateProps {
   title?: string;
@@ -13,6 +14,9 @@ export function QueryErrorState({
   message,
 }: QueryErrorStateProps) {
   return (
+    <>
+    {/* Keep the menu button reachable even when the page failed to load. */}
+    <Header title="StockSense" />
     <div className="flex h-full items-center justify-center p-6">
       <div className="glass max-w-md rounded-2xl p-6 text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
@@ -25,5 +29,6 @@ export function QueryErrorState({
         </Button>
       </div>
     </div>
+    </>
   );
 }

@@ -27,13 +27,13 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border bg-muted/30">
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Product</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Category</th>
-              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">Stock</th>
-              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">Selling Price</th>
-              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">Value</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Status</th>
-              <th className="px-4 py-3"></th>
+              <th className="px-2 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground sm:px-4">Product</th>
+              <th className="hidden px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground md:table-cell">Category</th>
+              <th className="px-2 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground sm:px-4">Stock</th>
+              <th className="px-2 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground sm:px-4">Price</th>
+              <th className="hidden px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground lg:table-cell">Value</th>
+              <th className="hidden px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground sm:table-cell">Status</th>
+              <th className="px-2 py-3 sm:px-4"></th>
             </tr>
           </thead>
           <tbody>
@@ -45,13 +45,13 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                     key={product.id}
                     className={`border-b border-border/50 hover:bg-muted/30 transition-colors ${isLow ? "bg-destructive/5" : ""}`}
                   >
-                    <td className="px-4 py-3">
+                    <td className="cursor-pointer px-2 py-3 sm:px-4" onClick={() => onView(product)}>
                       <p className="font-medium text-foreground">{product.name}</p>
                       {(product.barcode || product.sku) && (
-                        <p className="font-mono text-xs text-muted-foreground">{product.barcode || product.sku}</p>
+                        <p className="font-mono text-[11px] text-muted-foreground sm:text-xs">{product.barcode || product.sku}</p>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="hidden px-4 py-3 md:table-cell">
                       <span
                         className="inline-flex items-center gap-1.5 rounded-lg px-2 py-0.5 text-xs font-medium"
                         style={{
@@ -62,7 +62,7 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                         {product.category.name}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-2 py-3 text-right sm:px-4">
                       <div
                         className={`font-semibold ${
                           product.status === "out_of_stock"
@@ -76,30 +76,30 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                       </div>
                       <p className="text-xs text-muted-foreground">min {product.reorderPoint}</p>
                     </td>
-                    <td className="px-4 py-3 text-right font-medium text-foreground">
+                    <td className="whitespace-nowrap px-2 py-3 text-right text-[13px] font-medium text-foreground sm:px-4 sm:text-sm">
                       {formatCurrency(product.sellingPrice)}
                     </td>
-                    <td className="px-4 py-3 text-right font-medium text-foreground">
+                    <td className="hidden px-4 py-3 text-right font-medium text-foreground lg:table-cell">
                       {formatCurrency(product.quantity * product.sellingPrice)}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="hidden px-4 py-3 sm:table-cell">
                       <Badge variant={status.variant}>{status.label}</Badge>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-1 justify-end">
-                        <Button variant="ghost" size="icon" onClick={() => onView(product)}>
+                    <td className="px-2 py-3 sm:px-4">
+                      <div className="flex items-center justify-end gap-0.5 sm:gap-1">
+                        <Button variant="ghost" size="icon" className="hidden sm:inline-flex" onClick={() => onView(product)}>
                           <Eye className="h-3.5 w-3.5" />
                         </Button>
-                        <Button asChild variant="ghost" size="icon" title="Print label">
+                        <Button asChild variant="ghost" size="icon" title="Print label" className="hidden sm:inline-flex">
                           <Link href={`/labels?ids=${product.id}`}>
                             <QrCode className="h-3.5 w-3.5" />
                           </Link>
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => onEdit(product)}>
+                        <Button variant="ghost" size="icon" className="size-7 sm:size-8" onClick={() => onEdit(product)}>
                           <Edit2 className="h-3.5 w-3.5" />
                         </Button>
                         <Button variant="ghost" size="icon" onClick={() => onDelete(product.id)}
-                          className="text-muted-foreground hover:text-destructive">
+                          className="size-7 text-muted-foreground hover:text-destructive sm:size-8">
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </div>

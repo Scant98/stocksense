@@ -3,6 +3,7 @@ import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Plus, Search, Download, ScanBarcode, Printer } from "lucide-react";
+import { PageSpinner } from "@/components/layout/page-spinner";
 import { Header } from "@/components/layout/header";
 import { ProductTable } from "@/components/inventory/product-table";
 import { ProductForm } from "@/components/inventory/product-form";
@@ -136,9 +137,7 @@ function InventoryContent() {
 
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-      </div>
+      <PageSpinner />
     );
   }
 

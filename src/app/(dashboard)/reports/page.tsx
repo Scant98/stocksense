@@ -16,7 +16,7 @@ import { TrendingUp, TrendingDown, DollarSign, ShoppingCart, Percent } from "luc
 import { Header } from "@/components/layout/header";
 import { BlurFade } from "@/components/magic/blur-fade";
 import { AnimatedNumber } from "@/components/magic/animated-number";
-import { formatCurrency } from "@/lib/utils";
+import { formatCompactCurrency, formatCurrency } from "@/lib/utils";
 import { useReports, type ReportPeriod } from "@/hooks/use-api";
 import { QueryErrorState } from "@/components/layout/query-error-state";
 
@@ -55,16 +55,18 @@ function KpiCard({ label, value, color, icon: Icon, sub }: { label: string; valu
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass rounded-2xl p-5"
+      className="glass min-w-0 rounded-2xl p-3.5 sm:p-5"
     >
-      <div className="flex items-start justify-between">
-        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
-        <div className="rounded-lg p-1.5" style={{ backgroundColor: `${color}20` }}>
+      <div className="flex items-start justify-between gap-2">
+        <p className="min-w-0 text-[11px] font-medium uppercase leading-snug tracking-wider text-muted-foreground sm:text-xs">{label}</p>
+        <div className="shrink-0 rounded-lg p-1.5" style={{ backgroundColor: `${color}20` }}>
           <Icon className="h-4 w-4" style={{ color }} />
         </div>
       </div>
-      <p className="mt-3 text-2xl font-bold" style={{ color }}>
-        <AnimatedNumber value={value} formatter={formatCurrency} duration={900} />
+      <p className="mt-2 text-xl font-bold leading-tight sm:mt-3 sm:text-2xl" style={{ color }}>
+        {/* Short form on phones so big amounts never get clipped by the card. */}
+        <AnimatedNumber value={value} formatter={formatCompactCurrency} duration={900} className="sm:hidden" />
+        <AnimatedNumber value={value} formatter={formatCurrency} duration={900} className="hidden sm:inline" />
       </p>
       {sub && <p className="mt-1 text-xs text-muted-foreground">{sub}</p>}
     </motion.div>
@@ -113,7 +115,7 @@ export default function ReportsPage() {
           <>
             {/* KPI Row */}
             <BlurFade delay={0.1}>
-              <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
                 <KpiCard
                   label="Total Revenue"
                   value={data.summary.revenue}
@@ -138,15 +140,15 @@ export default function ReportsPage() {
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="glass rounded-2xl p-5"
+                  className="glass min-w-0 rounded-2xl p-3.5 sm:p-5"
                 >
-                  <div className="flex items-start justify-between">
-                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Profit Margin</p>
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="min-w-0 text-[11px] font-medium uppercase leading-snug tracking-wider text-muted-foreground sm:text-xs">Profit Margin</p>
                     <div className="rounded-lg p-1.5 bg-primary/20">
                       <Percent className="h-4 w-4 text-primary" />
                     </div>
                   </div>
-                  <p className={`mt-3 text-2xl font-bold ${isLosingMoney ? "text-destructive" : "text-primary"}`}>
+                  <p className={`mt-2 text-xl font-bold leading-tight sm:mt-3 sm:text-2xl ${isLosingMoney ? "text-destructive" : "text-primary"}`}>
                     <AnimatedNumber value={data.summary.margin} formatter={(v) => `${v.toFixed(1)}%`} duration={900} />
                   </p>
                   <div className="mt-2 h-1.5 w-full rounded-full bg-muted/60 overflow-hidden">

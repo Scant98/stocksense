@@ -38,14 +38,15 @@ export function CategoryChart({ data = [] }: Props) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.4 }}
-      className="glass rounded-2xl p-5"
+      className="glass min-w-0 rounded-2xl p-4 sm:p-5"
     >
       <div className="mb-4">
         <h3 className="text-sm font-medium text-muted-foreground">Stock Distribution</h3>
         <p className="text-lg font-bold text-foreground">By Category</p>
       </div>
-      <div className="flex items-center gap-4">
-        <ResponsiveContainer width="50%" height={160}>
+      <div className="flex flex-col items-center gap-4 sm:flex-row">
+        <div className="w-full shrink-0 sm:w-1/2">
+        <ResponsiveContainer width="100%" height={160}>
           <PieChart>
             <Pie
               data={data}
@@ -63,14 +64,15 @@ export function CategoryChart({ data = [] }: Props) {
             <Tooltip content={<CustomTooltip />} />
           </PieChart>
         </ResponsiveContainer>
-        <div className="flex-1 space-y-2">
+        </div>
+        <div className="w-full min-w-0 flex-1 space-y-2">
           {data.map((cat) => (
             <div key={cat.name} className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2">
+              <div className="flex min-w-0 items-center gap-2">
                 <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
                 <span className="text-muted-foreground truncate">{cat.name}</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex shrink-0 items-center gap-2">
                 <span className="text-foreground font-medium">{cat.value}</span>
                 <span className="text-muted-foreground">
                   {total > 0 ? Math.round((cat.value / total) * 100) : 0}%
